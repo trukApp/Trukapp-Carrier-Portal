@@ -148,20 +148,6 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         setExpanded((prev) => ({ ...prev, [vehicleId]: !prev[vehicleId] }));
     };
 
-    // const handleTrack = (allocation: Allocation) => {
-    //     localStorage.setItem("allocationData", JSON.stringify(allocation));
-    //     if (order) {
-    //         localStorage.setItem("orderData", JSON.stringify(order));
-    //     }
-    //     router.push(`/liveTracking`);
-    // };
-    // const handleRouteReply = (vehicle_ID: string) => {
-    //     if (order) {
-    //         localStorage.setItem("orderData", JSON.stringify(order));
-    //     }
-    //     router.push(`/liveTracking/autoreply?vehicle_ID=${vehicle_ID}`);
-    // };
-
     useEffect(() => {
         if (orderId) {
             fetchOrderById();
@@ -170,7 +156,6 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
 
     if (isFetching) return <p>Loading...</p>
     if (error) return <p>Error fetching order details</p>;
-
 
 
     const handleCloseReject = () => {
