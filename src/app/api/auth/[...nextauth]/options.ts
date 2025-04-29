@@ -59,10 +59,10 @@ export const options: NextAuthOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: {
-                    label: "Email",
+                carrierId: {
+                    label: "Carrier ID",
                     type: "text",
-                    placeholder: "Enter your email number",
+                    placeholder: "Enter your carrier ID",
                 },
                 password: {
                     label: "Password",
@@ -71,23 +71,23 @@ export const options: NextAuthOptions = {
                 },
             },
             async authorize(credentials) {
-                if (!credentials?.email) {
-                    throw new Error("Email is required");
+                if (!credentials?.carrierId) {
+                    throw new Error("Carrier ID is required");
                 } else if (!credentials?.password) {
                     throw new Error("Password is required");
                 }
 
                 try {
                     const response = await fetch(
-                        `https://dev-api.trukapp.com/truk/log/login`,
+                        `https://dev-api.trukapp.com/truk/carrier/carrier-login`,
                         {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                             },
                             body: JSON.stringify({
-                                email: credentials.email,
-                                password: credentials.password,
+                                carrier_ID: credentials.carrierId,
+                                carrier_password: credentials.password,
                             }),
                         }
                     );
@@ -101,7 +101,7 @@ export const options: NextAuthOptions = {
                     console.log("user is :", user);
                     if (user && user.accessToken) {
                         return {
-                            id: user.profile_id,
+                            id: user.carrier_ID,
                             accessToken: user.accessToken,
                             refreshToken: user.refreshToken,
                         };

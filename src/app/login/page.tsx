@@ -9,7 +9,7 @@ import { Field, Form, Formik, FormikHelpers } from 'formik';
 import SnackbarAlert from '@/Components/ReusableComponents/SnackbarAlerts';
 
 interface LoginValues {
-    email: string;
+    carrierId: string;
     password: string;
 }
 
@@ -29,22 +29,16 @@ const LoginPage: React.FC = () => {
     }, []);
 
     const validationSchema = Yup.object({
-        email: Yup.string().email("Invalid email address").required("Email is required"),
-        password: Yup.string()
-            .min(6, "Password must be at least 6 characters")
-            .matches(/[A-Z]/, "Must contain at least one uppercase letter")
-            .matches(/[a-z]/, "Must contain at least one lowercase letter")
-            .matches(/\d/, "Must contain at least one digit")
-            .matches(/[!@#$%^&*]/, "Must contain at least one special character (!@#$%^&*)")
-            .required("Password is required"),
+        carrierId: Yup.string().required("Carrier ID is required"),
+        password: Yup.string().required("Password is required"),
     });
 
 
-    const handleLogin = async (values: { email: string; password: string }, { setSubmitting, setFieldError }: FormikHelpers<LoginValues>) => {
+    const handleLogin = async (values: { carrierId: string; password: string }, { setSubmitting, setFieldError }: FormikHelpers<LoginValues>) => {
         try {
             const result = await signIn("credentials", {
                 redirect: false,
-                email: values.email,
+                carrierId: values.carrierId,
                 password: values.password,
             });
 
@@ -92,7 +86,7 @@ const LoginPage: React.FC = () => {
                     </Typography>
 
                     <Formik
-                        initialValues={{ email: "", password: "" }}
+                        initialValues={{ carrierId: "", password: "" }}
                         validationSchema={validationSchema}
                         onSubmit={handleLogin}
                     >
@@ -100,17 +94,17 @@ const LoginPage: React.FC = () => {
                             <Form>
                                 <Field
                                     as={TextField}
-                                    label="Email"
+                                    label="Carrier ID"
                                     variant="outlined"
                                     fullWidth
                                     size="small"
                                     margin="normal"
-                                    name="email"
-                                    value={values.email}
+                                    name="carrierId"
+                                    value={values.carrierId}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                // error={touched.email && Boolean(errors.email)}
-                                // helperText={touched.email && errors.email}
+                                error={touched.carrierId && Boolean(errors.carrierId)}
+                                helperText={touched.carrierId && errors.carrierId}
                                 />
 
                                 <Field
