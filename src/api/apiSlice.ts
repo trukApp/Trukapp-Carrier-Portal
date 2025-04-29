@@ -70,7 +70,8 @@ export const apiSlice = createApi({
         "AssignedOrders",
         "SingleVehicleMaster",
         "DataCount",
-        "ValidateRoute"
+        "ValidateRoute",
+        "CARRIER_ASSIGNMENTS"
     ],
     endpoints: (builder) => ({
         userLogin: builder.mutation<User, { phone: string; password: string }>({
@@ -81,104 +82,6 @@ export const apiSlice = createApi({
             }),
         }),
 
-        //Business Partners API'S
-        customerRegistration: builder.mutation({
-            query: (body) => ({
-                url: "business/create-partners",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "PARTNERS", id: "LIST" }],
-        }),
-
-        vendorRegistration: builder.mutation({
-            query: (body) => ({
-                url: "business/create-partners",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "PARTNERS", id: "LIST" }],
-        }),
-
-        editBusinessPartner: builder.mutation({
-            query: ({ body, partnerId }) => ({
-                url: `business/edit-partner?partner_id=${partnerId}`,
-                method: "PUT",
-                body,
-            }),
-            invalidatesTags: [{ type: "PARTNERS", id: "LIST" }],
-        }),
-
-        deleteBusinessPartner: builder.mutation({
-            query: (partnerId) => ({
-                url: `business/delete-partner?partner_id=${partnerId}`,
-                method: "DELETE",
-            }),
-            invalidatesTags: [{ type: "PARTNERS", id: "LIST" }],
-        }),
-
-        getAllCustomersData: builder.query({
-            query: (params) => ({
-                url: "business/business-partners",
-                method: "GET",
-                params,
-            }),
-            providesTags: [{ type: "PARTNERS", id: "LIST" }],
-        }),
-
-        getAllVendorsData: builder.query({
-            query: (params) => ({
-                url: "business/business-partners",
-                method: "GET",
-                params,
-            }),
-            providesTags: [{ type: "PARTNERS", id: "LIST" }],
-        }),
-
-        //Drivers API'S
-        driverRegistration: builder.mutation({
-            query: (body) => ({
-                url: "driver/add-drivers",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "DRIVERS", id: "LIST" }],
-        }),
-
-        deleteDriver: builder.mutation({
-            query: (driverId) => ({
-                url: `driver/delete-driver?driver_id=${driverId}`,
-                method: "DELETE",
-            }),
-            invalidatesTags: [{ type: "DRIVERS", id: "LIST" }],
-        }),
-
-        getFilteredDrivers: builder.query({
-            query: (searchKey) => ({
-                url: `driver/search-drivers`,
-                method: "GET",
-                params: { searchKey },
-            }),
-            providesTags: [{ type: "DRIVERS", id: "SEARCH" }],
-        }),
-
-        editDriver: builder.mutation({
-            query: ({ body, driverId }) => ({
-                url: `driver/edit-driver?driver_id=${driverId}`,
-                method: "PUT",
-                body,
-            }),
-            invalidatesTags: [{ type: "DRIVERS", id: "LIST" }],
-        }),
-
-        getAllDriversData: builder.query({
-            query: (params) => ({
-                url: "driver/get-drivers",
-                method: "GET",
-                params,
-            }),
-            providesTags: [{ type: "DRIVERS", id: "LIST" }],
-        }),
 
         //  carrier master
         getCarrierMaster: builder.query({
@@ -745,23 +648,22 @@ export const apiSlice = createApi({
             invalidatesTags: [{ type: "Orderss", id: "LIST" }]
         }),
 
+        //Carrier Portal API's
+        getCarrierAssignments: builder.query({
+            query: (carrierId) => ({
+                url: `carrier-assignment/assignment?carrier_ID=${carrierId}`,
+                method: "GET",
+            }),
+            providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+        }),
+
+
     }),
 
 });
 
 export const {
     useUserLoginMutation,
-    useCustomerRegistrationMutation,
-    useVendorRegistrationMutation,
-    useDriverRegistrationMutation,
-    useGetAllCustomersDataQuery,
-    useGetAllVendorsDataQuery,
-    useGetAllDriversDataQuery,
-    useGetFilteredDriversQuery,
-    useEditBusinessPartnerMutation,
-    useDeleteBusinessPartnerMutation,
-    useEditDriverMutation,
-    useDeleteDriverMutation,
     useGetCarrierMasterQuery,
     usePostCarrierMasterMutation,
     useEditCarrierMasterMutation,
@@ -824,4 +726,6 @@ export const {
     useGetCarrierAssignmentReqQuery,
     usePostCarrierRejectigOrderMutation,
     usePostCarrierAssigningOrderConfirmMutation,
+    //Carrier Portal API'S
+    useGetCarrierAssignmentsQuery
 } = apiSlice;
