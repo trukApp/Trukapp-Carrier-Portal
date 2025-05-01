@@ -38,33 +38,17 @@ import {
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { withAuthComponent } from '@/Components/WithAuthComponent';
+import { useAppSelector } from '@/Store';
+import { CarrierAssignment } from '@/types/types';
 
 // Define a strict interface for assignment data
-interface CarrierAssignment {
-    ca_id: number;
-    cas_ID: string;
-    order_ID: string;
-    assignment_status: string;
-    assigned_time: string;
-    confirmed_time?: string;
-    driver_data?: {
-        c_driver_name?: string;
-        c_driver_number?: string;
-        c_driver_license?: string;
-    };
-    vehicle_num?: string;
-    assignment_cost?: {
-        total_distance?: string;
-        cost_criteria_considered?: string;
-    };
-    confirmed_to?: string;
-}
-
 const CarrierOrdersPage: React.FC = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const carrierId = searchParams.get('carrierID') || '';
-
+    const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
+    console.log('carrierIdFromRedux orders :', carrierIdFromRedux)
     const [loading, setLoading] = useState(false);
 
     const { data: assignments, isLoading: isFetching } = useGetCarrierAssignmentsQuery(carrierId);
@@ -152,7 +136,7 @@ const CarrierOrdersPage: React.FC = () => {
             </Backdrop>
 
             <Box p={4}>
-                <Typography variant="h4" gutterBottom fontWeight="bold">
+                <Typography variant="h5" gutterBottom fontWeight="bold" color='primary'>
                     🚚 Carrier Orders
                 </Typography>
 
@@ -184,4 +168,4 @@ const CarrierOrdersPage: React.FC = () => {
     );
 };
 
-export default CarrierOrdersPage;
+export default withAuthComponent(CarrierOrdersPage);

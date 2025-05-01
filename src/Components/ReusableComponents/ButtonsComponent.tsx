@@ -9,7 +9,7 @@ interface CustomButtonProps extends ButtonProps {
 export const CustomButtonFilled: FC<CustomButtonProps> = ({ children, ...props }) => {
     return (
         <Button
-            type="submit"
+            // type="submit"
             variant="contained"
             sx={{
                 margin: '10px',

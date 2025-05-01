@@ -47,7 +47,7 @@ const TransportExecution = () => {
             </Backdrop>
 
             <Box>
-                <Typography variant="h6" sx={{ mt: 4, mb: 1, color: '#F08C24', fontWeight: 'bold' }}>
+                <Typography variant="h6" sx={{ mt: 1, mb: 1, color: '#F08C24', fontWeight: 'bold' }}>
                     Transport Execution
                 </Typography>
                 <Box

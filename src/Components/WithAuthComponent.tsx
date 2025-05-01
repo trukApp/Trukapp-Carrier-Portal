@@ -4,11 +4,18 @@ import { useSession } from 'next-auth/react';
 import { Backdrop, CircularProgress, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
+import { useAppDispatch } from '@/Store';
+import { setCarrierId } from '@/Store/authSlice';
 
 
 export const withAuthComponent = (WrappedComponent: React.FC): React.FC => {
     const AuthWrapper: React.FC = (props) => {
         const { data: session, status } = useSession();
+        const dispatch = useAppDispatch()
+        const carrierId = session?.user?.id
+        if (carrierId) {
+            dispatch(setCarrierId(carrierId))
+        }
         const router = useRouter();
         useEffect(() => {
             if (status === 'unauthenticated') {

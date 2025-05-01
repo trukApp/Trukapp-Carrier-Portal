@@ -7,11 +7,7 @@ import { CustomButtonFilled } from '@/Components/ReusableComponents/ButtonsCompo
 import * as Yup from 'yup';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import SnackbarAlert from '@/Components/ReusableComponents/SnackbarAlerts';
-
-interface LoginValues {
-    carrierId: string;
-    password: string;
-}
+import { LoginValues } from '@/types/types';
 
 const LoginPage: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -140,10 +136,6 @@ const LoginPage: React.FC = () => {
                             </Form>
                         )}
                     </Formik>
-
-                    {/* <Typography variant="body2" align="center" marginTop="10px">
-            Don&apos;t have an account ? <a href="/signup" style={{ color: "#83214F" }}>Sign up</a>
-          </Typography> */}
                 </Box>
             </Box>
         </Grid>
