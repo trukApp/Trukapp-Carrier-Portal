@@ -1,28 +1,3 @@
-// 'use client';
-
-// import React from 'react';
-// import { useSearchParams } from 'next/navigation';
-// import { useGetCarrierAssignmentsQuery } from '@/api/apiSlice';
-
-// const CarrierOrdersPage = () => {
-//     const searchParams = useSearchParams();
-//     const carrierID = searchParams.get('carrierID');
-//     const { data: getAllAssignments, isLoading } = useGetCarrierAssignmentsQuery(carrierID);
-//     const getAllCarrierAssignments = getAllAssignments?.data
-//     console.log("getAllAssignments: ", getAllCarrierAssignments)
-
-//     return (
-//         <div>
-//             CarrierOrdersPage - Carrier ID: {carrierID}
-//         </div>
-//     );
-// };
-
-// export default CarrierOrdersPage;
-
-
-
-
 'use client';
 
 import React, { useState } from 'react';

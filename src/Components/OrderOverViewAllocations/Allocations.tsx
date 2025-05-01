@@ -624,24 +624,29 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                 </Grid>
                                             </Box>
                                         ))}
-                                    <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
-                                        <>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => setOpenAcceptCarrier(true)}
-                                            >
-                                                Accept
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={handleOpenDialog}
-                                            >
-                                                Reject
-                                            </Button>
-                                        </>
-                                    </Box>
+                                    {order?.order?.order_status === "assignment pending" ? (
+                                        <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
+                                            <>
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={() => setOpenAcceptCarrier(true)}
+                                                >
+                                                    Accept
+                                                </Button>
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={handleOpenDialog}
+                                                >
+                                                    Reject
+                                                </Button>
+                                            </>
+                                        </Box>
+
+                                    ) : (
+                                        null
+                                    )}
                                     {/* <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
                                         {!assignedOrder?.data[0]?.allocated_vehicles?.some(
                                             (vehicle: string) => vehicle === allocation.vehicle_ID
