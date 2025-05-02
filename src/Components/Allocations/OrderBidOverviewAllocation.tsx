@@ -181,7 +181,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                 bid_placed_at: new Date().toISOString().slice(0, 19)
             }
         };
-
         try {
             const placeBidResponse = await placeBid(placeBidPayload).unwrap
             console.log("placeBidResponse: ", placeBidResponse)
