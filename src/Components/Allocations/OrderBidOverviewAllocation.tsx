@@ -169,8 +169,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
 
     });
 
-
-
     const handleSubmitAccept = async (values: typeof initialValuesAccept) => {
         const placeBidPayload = {
             bid_id: bidID,
