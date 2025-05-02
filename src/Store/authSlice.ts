@@ -11,7 +11,8 @@ import { IAuthState } from "@/types/types";
 // step 2 : Defining initial states, This sets the default values for your slice of state when the app starts or store is reset.
 const initialState: IAuthState = {
     authState: false,
-    carrierId : ''
+    carrierId: '',
+    orderID: "",
 };
 
 // Step 3: Creating the Slice, This uses createSlice to generate action creators and reducers in a clean way.
@@ -25,13 +26,18 @@ export const authSlice = createSlice({
         setCarrierId: (state, action: PayloadAction<string>) => {
             state.carrierId = action.payload;
         },
+        setOrderID: (state, action: PayloadAction<string>) => {
+            state.orderID = action.payload;
+        },
+
     },
 });
 
 // Step 4: Exporting Actions and Reducer, This allows other parts of your app to use the actions and reducer.
 export const {
     setAuthState,
-    setCarrierId
+    setCarrierId,
+    setOrderID
 } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

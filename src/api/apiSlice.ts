@@ -33,7 +33,8 @@ export const apiSlice = createApi({
         "ProductMaster",
         "Orders",
         "Orderss",
-        "CARRIER_ASSIGNMENTS"
+        "CARRIER_ASSIGNMENTS",
+        "Order Bidding"
     ],
     endpoints: (builder) => ({
         getLocationMaster: builder.query({
@@ -106,12 +107,46 @@ export const apiSlice = createApi({
             providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
         }),
 
+        getAllOrders: builder.query({
+            query: (params) => ({
+                url: `order/all-orders`,
+                method: "GET",
+                params,
+            }),
+            providesTags: [{ type: "Orders", id: "LIST" }],
+        }),
+
+        //BIDDING API'S
+        getAllBiddingOrders: builder.query({
+            query: (carrierId) => ({
+                url: `assignment-bid/active-bids?carrier_ID=${carrierId}`,
+                method: "GET",
+            }),
+            providesTags: [{ type: "Order Bidding", id: "LIST" }],
+        }),
+
+        placingTheBidForOrder: builder.mutation({
+            query: ({ body, bid_id, order_ID }) => ({
+                url: `assignment-bid/place-bid?bid_id=${bid_id}&order_ID=${order_ID}`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [{ type: "Order Bidding", id: "LIST" }],
+        }),
+
+        getAllCarrierPlacedBidsOrders: builder.query({
+            query: (carrierId) => ({
+                url: `assignment-bid/bids-order-id?order_ID=${carrierId}`,
+                method: "GET",
+            }),
+            providesTags: [{ type: "Order Bidding", id: "LIST" }],
+        }),
 
     }),
 
 });
 
-export const { 
+export const {
     useGetLocationMasterQuery,
     useGetAllProductsQuery,
     useGetOrderByIdQuery,
@@ -119,5 +154,9 @@ export const {
     useGetCarrierAssignmentReqQuery,
     usePostCarrierRejectigOrderMutation,
     usePostCarrierAssigningOrderConfirmMutation,
-    useGetCarrierAssignmentsQuery
+    useGetCarrierAssignmentsQuery,
+    useGetAllOrdersQuery,
+    useGetAllBiddingOrdersQuery,
+    usePlacingTheBidForOrderMutation,
+    useGetAllCarrierPlacedBidsOrdersQuery
 } = apiSlice;

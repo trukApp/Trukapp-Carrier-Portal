@@ -2,7 +2,7 @@
 import React from "react";
 import { useGetOrderByIdQuery } from "@/api/apiSlice";
 import { Backdrop, CircularProgress, Paper, Typography, Box } from "@mui/material";
-import Allocations from "@/Components/OrderOverViewAllocations/Allocations";
+import Allocations from "@/Components/Allocations/DetailedOrderOverviewAllocation";
 import { useSearchParams } from 'next/navigation';
 import moment from "moment";
 

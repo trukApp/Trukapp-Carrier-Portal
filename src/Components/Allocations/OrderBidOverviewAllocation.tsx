@@ -4,11 +4,8 @@ import Grid from '@mui/material/Grid';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 // import { useRouter } from 'next/navigation';
-import {
-    useGetAllProductsQuery, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation
-    // useGetAssignedOrderByIdQuery,
-} from "@/api/apiSlice";
-import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
+import { useGetAllProductsQuery, useGetLocationMasterQuery, usePlacingTheBidForOrderMutation } from "@/api/apiSlice";
+// import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
 import moment from 'moment';
 import Image from "next/image";
 import { Form, Formik } from "formik";
@@ -16,6 +13,7 @@ import * as Yup from "yup";
 // import { useSelector } from "react-redux";
 // import { RootState } from "@/Store";
 import CloseIcon from '@mui/icons-material/Close';
+import { useAppSelector } from "@/Store";
 
 interface RoutePoint {
     start: {
@@ -48,7 +46,9 @@ interface AllocationsProps {
     allocations: Allocation[];
     orderId: string;
     allocatedPackageDetails: [];
-    from: string
+    from: string;
+    bidID: string;
+    isCarrirerBidded: []
 }
 
 interface Product {
@@ -98,21 +98,24 @@ interface Location {
     loc_ID: string
 }
 
-const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from }) => {
-    console.log("fromm :", from)
-    const [openReject, setOpenReject] = useState(false);
-    // const { refetch: refetchOrderById } = useGetOrderByIdQuery({ orderId }, { skip: true });
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [openAcceptCarrier, setOpenAcceptCarrier] = useState(false);
-    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "warning" | "info">("success");
+interface CarrierBid {
+    bid_amount: string;
+    bid_from: string;
+    bid_placed_at: string;
+}
+
+const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from, bidID, isCarrirerBidded }) => {
     const theme = useTheme();
+    const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
+    const carrierBids = isCarrirerBidded as CarrierBid[];
+
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    // const router = useRouter();
+    // const [snackbarOpen, setSnackbarOpen] = useState(false);
+    // const [snackbarMessage, setSnackbarMessage] = useState("");
+    // const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "warning" | "info">("success");
+    const [openAcceptCarrier, setOpenAcceptCarrier] = useState(false);
     const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-    const [postRejectOrderByCarrier, { isLoading: isRejecting }] = usePostCarrierRejectigOrderMutation()
-    const [postAssignOrderByCarrier, { isLoading: isAssignConfirm }] = usePostCarrierAssigningOrderConfirmMutation()
-    // const { data: assignedOrder } = useGetAssignedOrderByIdQuery({ order_ID: orderId })
+    const [placeBid, { isLoading: isAssignConfirm }] = usePlacingTheBidForOrderMutation()
     const { data: productsData } = useGetAllProductsQuery({})
     const allProductsData = productsData?.products || [];
     const { data: locationsData } = useGetLocationMasterQuery({});
@@ -132,10 +135,10 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         return details.length > 0 ? details.join(", ") : "Location details not available";
     };
 
-    const { data: order, refetch: fetchOrderById, isFetching, error } = useGetOrderByIdQuery(
-        { orderId },
-        { skip: !orderId }
-    );
+    // const { data: order, refetch: fetchOrderById, isFetching, error } = useGetOrderByIdQuery(
+    //     { orderId },
+    //     { skip: !orderId }
+    // );
 
     const getProductDetails = (productID: string) => {
         const productInfo = allProductsData.find((product: ProductDetails) => product.product_ID === productID);
@@ -148,100 +151,44 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         setExpanded((prev) => ({ ...prev, [vehicleId]: !prev[vehicleId] }));
     };
 
-    useEffect(() => {
-        if (orderId) {
-            fetchOrderById();
-        }
-    }, [orderId, fetchOrderById]);
+    // useEffect(() => {
+    //     if (orderId) {
+    //         fetchOrderById();
+    //     }
+    // }, [orderId, fetchOrderById]);
 
-    if (isFetching) return <p>Loading...</p>
-    if (error) return <p>Error fetching order details</p>;
-
-
-    const handleCloseReject = () => {
-        setOpenReject(false);
-    };
-
-    const handleYes = () => {
-        handleRejectByCarrier();
-        handleCloseReject();
-    };
-
-    const handleRejectByCarrier = async () => {
-        const carrierIdForOrder = from   // from is the carrier id which we are getting via params when comig from order req for carrier page
-        try {
-            const body = {
-                carrier_ID: carrierIdForOrder,
-                order_ID: orderId
-            }
-            console.log('bodyy:', body)
-            const response = await postRejectOrderByCarrier(body).unwrap();
-            console.log('Rejection response:', response);
-            if (response) {
-                setSnackbarMessage(`Order ${orderId} rejected !`);
-                setSnackbarSeverity("info");
-                setSnackbarOpen(true);
-            }
-        } catch (error) {
-            console.error('Error rejecting:', error);
-            setSnackbarMessage(`Unable to reject this order now , try after sometime.`);
-            setSnackbarSeverity("info");
-            setSnackbarOpen(true);
-        }
-    };
+    // if (isFetching) return <p>Loading...</p>
+    // if (error) return <p>Error fetching order details</p>;
 
     const initialValuesAccept = {
-        vehicleNumAccept: '',
-        driverNameAccept: '',
-        driverNumberAccept: '',
-        driverLicenseAccept: '',
-        deviceIdAccept: '',
+        amount: ''
     };
 
     const validationSchemaAccept = Yup.object().shape({
-        vehicleNumAccept: Yup.string().required('Vehicle Number is required'),
-        driverNameAccept: Yup.string().required('Driver Name is required'),
-        driverNumberAccept: Yup.string()
-            .required('Driver Number is required')
-            .matches(/^[0-9]{10}$/, 'Driver Number must be 10 digits'),
-        driverLicenseAccept: Yup.string().required('Driver License is required'),
-        deviceIdAccept: Yup.string().required('Device ID is required'),
+        amount: Yup.string().required('Amount is required'),
 
     });
 
-    const handleOpenDialog = () => {
-        setOpenReject(true);
-    };
+
 
     const handleSubmitAccept = async (values: typeof initialValuesAccept) => {
+
         console.log('Submitted Accept Data:', values);
-        const carrierIdForOrder = from
+        const placeBidPayload = {
+            bid_id: bidID,
+            order_ID: orderId,
+            body: {
+                bid_amount: values.amount,
+                bid_from: carrierIdFromRedux,
+                bid_placed_at: new Date().toISOString().slice(0, 19)
+            }
+        };
+
         try {
-            const body = {
-                carrier_ID: carrierIdForOrder,
-                order_ID: orderId,
-                vehicle_num: values.vehicleNumAccept,
-                driver_data: {
-                    c_driver_name: values.driverNameAccept,
-                    c_driver_number: values.driverNumberAccept,
-                    c_driver_license: values.driverLicenseAccept
-                },
-                device_ID: values.deviceIdAccept,
-                confirmed_time: Date.now()
-            }
-            console.log('bodyy:', body)
-            const response = await postAssignOrderByCarrier(body).unwrap();
-            console.log('assign response:', response);
-            if (response) {
-                setSnackbarMessage(`Carrier ${carrierIdForOrder} assigned to Order ${orderId}  successfully!`);
-                setSnackbarSeverity("success");
-                setSnackbarOpen(true);
-            }
+            const placeBidResponse = await placeBid(placeBidPayload).unwrap
+            console.log("placeBidResponse: ", placeBidResponse)
         } catch (error) {
-            console.error('Error assigning:', error);
-            setSnackbarMessage(`Unable to assign this order now , try after sometime.`);
-            setSnackbarSeverity("error");
-            setSnackbarOpen(true);
+            console.log("Getting Error While Placing the Bid to Order: ", error)
         }
 
         setOpenAcceptCarrier(false);
@@ -253,16 +200,16 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                     color: "#ffffff",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                 }}
-                open={isRejecting || isAssignConfirm}
+                open={isAssignConfirm}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <SnackbarAlert
+            {/* <SnackbarAlert
                 open={snackbarOpen}
                 message={snackbarMessage}
                 severity={snackbarSeverity}
                 onClose={() => setSnackbarOpen(false)}
-            />
+            /> */}
 
             <Typography variant="h6" gutterBottom color="#F08C24" style={{ fontWeight: 'bold' }}>
                 Allocations
@@ -272,45 +219,21 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                 const uniqueKey = `${allocation.vehicle_ID}_${allocation.route[0].end.address}`;
                 return (
                     <>
-                        <Dialog open={openReject}
-                            onClose={handleCloseReject}
-                        >
-                            <DialogTitle sx={{ m: 0, p: 2, position: 'relative' }}
-                            >Confirm Rejection
-                                <IconButton
-                                    aria-label="close"
-                                    onClick={handleCloseReject}
-                                    sx={{
-                                        position: 'absolute',
-                                        right: 8,
-                                        top: 8,
-                                        color: (theme) => theme.palette.grey[500],
-                                    }}
-                                >
-                                    <CloseIcon />
-                                </IconButton>
-                            </DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Are you sure you want to reject this order?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleCloseReject} color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleYes} color="error" autoFocus>
-                                    Yes, Reject
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-
-                        <Dialog open={openAcceptCarrier} onClose={() => setOpenAcceptCarrier(false)} maxWidth="xs" fullWidth
+                        <Dialog
+                            open={openAcceptCarrier}
+                            onClose={() => setOpenAcceptCarrier(false)}
+                            maxWidth="xs"
+                            fullWidth
                             PaperProps={{
-                                sx: { backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '20px', },
+                                sx: {
+                                    backgroundColor: '#f5f5f5',
+                                    padding: '10px',
+                                    borderRadius: '20px',
+                                },
                             }}
                         >
-                            <DialogTitle sx={{ m: 0, p: 2, position: 'relative' }}>Confirm Carrier Assignment
+                            <DialogTitle sx={{ m: 0, p: 2, position: 'relative' }}>
+                                Place the amount to bid for this order {orderId}
                                 <IconButton
                                     aria-label="close"
                                     onClick={() => setOpenAcceptCarrier(false)}
@@ -324,6 +247,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                     <CloseIcon />
                                 </IconButton>
                             </DialogTitle>
+
                             <Formik
                                 initialValues={initialValuesAccept}
                                 validationSchema={validationSchemaAccept}
@@ -339,49 +263,14 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                         <DialogContent>
                                             <Box display="flex" flexDirection="column" gap={2}>
                                                 <TextField
-                                                    fullWidth size='small'
-                                                    label="Vehicle Number"
-                                                    name="vehicleNumAccept"
-                                                    value={valuesAccept.vehicleNumAccept}
-                                                    onChange={handleChangeAccept}
-                                                    error={touchedAccept.vehicleNumAccept && Boolean(errorsAccept.vehicleNumAccept)}
-                                                    helperText={touchedAccept.vehicleNumAccept && errorsAccept.vehicleNumAccept}
-                                                />
-                                                <TextField
                                                     fullWidth
-                                                    label="Driver Name" size='small'
-                                                    name="driverNameAccept"
-                                                    value={valuesAccept.driverNameAccept}
+                                                    size="small"
+                                                    label="Amount"
+                                                    name="amount"
+                                                    value={valuesAccept.amount}
                                                     onChange={handleChangeAccept}
-                                                    error={touchedAccept.driverNameAccept && Boolean(errorsAccept.driverNameAccept)}
-                                                    helperText={touchedAccept.driverNameAccept && errorsAccept.driverNameAccept}
-                                                />
-                                                <TextField
-                                                    fullWidth
-                                                    label="Driver Number" size='small'
-                                                    name="driverNumberAccept"
-                                                    value={valuesAccept.driverNumberAccept}
-                                                    onChange={handleChangeAccept}
-                                                    error={touchedAccept.driverNumberAccept && Boolean(errorsAccept.driverNumberAccept)}
-                                                    helperText={touchedAccept.driverNumberAccept && errorsAccept.driverNumberAccept}
-                                                />
-                                                <TextField
-                                                    fullWidth
-                                                    label="Driver License" size='small'
-                                                    name="driverLicenseAccept"
-                                                    value={valuesAccept.driverLicenseAccept}
-                                                    onChange={handleChangeAccept}
-                                                    error={touchedAccept.driverLicenseAccept && Boolean(errorsAccept.driverLicenseAccept)}
-                                                    helperText={touchedAccept.driverLicenseAccept && errorsAccept.driverLicenseAccept}
-                                                />
-                                                <TextField
-                                                    fullWidth
-                                                    label="Device ID" size='small'
-                                                    name="deviceIdAccept"
-                                                    value={valuesAccept.deviceIdAccept}
-                                                    onChange={handleChangeAccept}
-                                                    error={touchedAccept.deviceIdAccept && Boolean(errorsAccept.deviceIdAccept)}
-                                                    helperText={touchedAccept.deviceIdAccept && errorsAccept.deviceIdAccept}
+                                                    error={touchedAccept.amount && Boolean(errorsAccept.amount)}
+                                                    helperText={touchedAccept.amount && errorsAccept.amount}
                                                 />
                                             </Box>
                                         </DialogContent>
@@ -397,6 +286,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                             </Formik>
                         </Dialog>
 
+
                         <Paper key={uniqueKey} sx={{ p: 2, mb: 2 }}>
                             <Grid container alignItems="center" justifyContent="space-between">
                                 <Grid sx={{ width: '97.5%' }}>
@@ -408,9 +298,9 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                             )}
 
                                         </Typography>
-                                        <Typography variant="body2" color="#F08C24" sx={{ fontSize: 11, backgroundColor: '#FCF0DE', paddingLeft: 2, paddingRight: 2, paddingTop: 0.7, paddingBottom: 0.3, borderRadius: 1.5 }}>
+                                        {/* <Typography variant="body2" color="#F08C24" sx={{ fontSize: 11, backgroundColor: '#FCF0DE', paddingLeft: 2, paddingRight: 2, paddingTop: 0.7, paddingBottom: 0.3, borderRadius: 1.5 }}>
                                             {order?.order?.order_status}
-                                        </Typography>
+                                        </Typography> */}
 
                                     </Grid>
 
@@ -624,77 +514,38 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                 </Grid>
                                             </Box>
                                         ))}
-                                    {order?.order?.order_status === "assignment pending" ? (
+                                    {/* {isCarrirerBidded.length > 0 ? null : (
                                         <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
-                                            <>
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={() => setOpenAcceptCarrier(true)}
-                                                >
-                                                    Accept
-                                                </Button>
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={handleOpenDialog}
-                                                >
-                                                    Reject
-                                                </Button>
-                                            </>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => setOpenAcceptCarrier(true)}
+                                            >
+                                                Accept
+                                            </Button>
                                         </Box>
+                                    )} */}
 
+                                    {carrierBids.length > 0 ? (
+                                        <Typography sx={{ mt: 3, textAlign: isMobile ? "center" : "right" }}>
+                                            You bid for this amount{" "}
+                                            <Box component="span" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                                {carrierBids[0]?.bid_amount}/-
+                                            </Box>
+                                        </Typography>
                                     ) : (
-                                        null
+                                        <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => setOpenAcceptCarrier(true)}
+                                            >
+                                                Accept
+                                            </Button>
+                                        </Box>
                                     )}
-                                    {/* <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
-                                        {!assignedOrder?.data[0]?.allocated_vehicles?.some(
-                                            (vehicle: string) => vehicle === allocation.vehicle_ID
-                                        ) && (
-                                                null
 
-                                            )}
 
-                                        {assignedOrder?.data[0]?.allocated_vehicles?.some(
-                                            (vehicle: string) => vehicle === allocation.vehicle_ID
-                                        ) && (
-                                                <>
-                                                    <>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => setOpenAcceptCarrier(true)}
-                                                        >
-                                                            Accept
-                                                        </Button>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={handleOpenDialog}
-                                                        >
-                                                            Reject
-                                                        </Button>
-                                                    </>
-                                                    {order?.order?.order_status === "finished" ? (
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => handleRouteReply(allocation.vehicle_ID)}
-                                                        >
-                                                            Route Reply
-                                                        </Button>
-                                                    ) : (order?.order?.order_status !== "carrier assignment") ? (
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => handleTrack(allocation)}
-                                                        >
-                                                            View Track
-                                                        </Button>
-                                                    ) : null}
-                                                </>
-                                            )}
-                                    </Box> */}
                                 </Box>
                             </Collapse>
                         </Paper></>
@@ -706,4 +557,4 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
     );
 };
 
-export default Allocations;
+export default OrderBidOverviewAllocation;

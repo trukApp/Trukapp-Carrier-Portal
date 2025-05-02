@@ -26,7 +26,7 @@ const CarrierOrdersPage: React.FC = () => {
     console.log('carrierIdFromRedux orders :', carrierIdFromRedux)
     const [loading, setLoading] = useState(false);
 
-    const { data: assignments, isLoading: isFetching } = useGetCarrierAssignmentsQuery(carrierId);
+    const { data: assignments, isLoading: isFetching } = useGetCarrierAssignmentsQuery(carrierIdFromRedux);
     const getAllCarrierAssignments: CarrierAssignment[] = assignments?.data || [];
 
     const handleNavigateToOrder = (orderId: string) => {
