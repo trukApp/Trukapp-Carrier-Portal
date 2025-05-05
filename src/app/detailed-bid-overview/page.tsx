@@ -16,7 +16,11 @@ const OrderDetailedOverview: React.FC = () => {
     const from = searchParams.get('from') ?? '';
     const { data: order, isLoading } = useGetOrderByIdQuery({ orderId });
     const { data: locationsData } = useGetLocationMasterQuery({});
-    const getAllLocations = locationsData?.locations.length > 0 ? locationsData?.locations : [];
+    // const getAllLocations = locationsData?.locations.length > 0 ? locationsData?.locations : [];
+    const getAllLocations = locationsData?.locations && locationsData.locations.length > 0
+        ? locationsData.locations
+        : [];
+
     const { data: getAllBids, isLoading: biddingLoading } = useGetAllCarrierPlacedBidsOrdersQuery(orderId);
     const isCarrirerBidded = getAllBids?.data[0]?.all_bids.filter((eachEahCarrier: CarrierBidData) => {
         return eachEahCarrier?.bid_from === carrierIdFromRedux
