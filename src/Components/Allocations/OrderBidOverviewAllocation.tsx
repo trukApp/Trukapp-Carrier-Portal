@@ -48,7 +48,7 @@ interface AllocationsProps {
     allocatedPackageDetails: [];
     from: string;
     bidID: string;
-    isCarrirerBidded: [];
+    isCarrirerBidded: CarrierBid[];
     getAllLocations: Location[];
 }
 
