@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 // import { useRouter } from 'next/navigation';
-import { useGetAllProductsQuery, useGetLocationMasterQuery, usePlacingTheBidForOrderMutation } from "@/api/apiSlice";
+import { useGetAllProductsQuery, usePlacingTheBidForOrderMutation } from "@/api/apiSlice";
 // import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
 import moment from 'moment';
 import Image from "next/image";
@@ -48,7 +48,8 @@ interface AllocationsProps {
     allocatedPackageDetails: [];
     from: string;
     bidID: string;
-    isCarrirerBidded: []
+    isCarrirerBidded: [];
+    getAllLocations: Location[];
 }
 
 interface Product {
@@ -95,7 +96,12 @@ export interface ProductDetails {
 
 
 interface Location {
-    loc_ID: string
+    loc_ID: string;
+    address_1: string;
+    city: string;
+    state: string;
+    country: string;
+    pincode: string
 }
 
 interface CarrierBid {
@@ -104,7 +110,7 @@ interface CarrierBid {
     bid_placed_at: string;
 }
 
-const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from, bidID, isCarrirerBidded }) => {
+const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from, bidID, isCarrirerBidded, getAllLocations }) => {
     const theme = useTheme();
     const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
     const carrierBids = isCarrirerBidded as CarrierBid[];
@@ -118,8 +124,8 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
     const [placeBid, { isLoading: isAssignConfirm }] = usePlacingTheBidForOrderMutation()
     const { data: productsData } = useGetAllProductsQuery({})
     const allProductsData = productsData?.products || [];
-    const { data: locationsData } = useGetLocationMasterQuery({});
-    const getAllLocations = locationsData?.locations.length > 0 ? locationsData?.locations : [];
+    // const { data: locationsData } = useGetLocationMasterQuery({});
+    // const getAllLocations = locationsData?.locations?.length > 0 ? locationsData?.locations : [];
     const getLocationDetails = (loc_ID: string) => {
         const location = getAllLocations.find((loc: Location) => loc.loc_ID === loc_ID);
         if (!location) return "Location details not available";
@@ -151,15 +157,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
         setExpanded((prev) => ({ ...prev, [vehicleId]: !prev[vehicleId] }));
     };
 
-    // useEffect(() => {
-    //     if (orderId) {
-    //         fetchOrderById();
-    //     }
-    // }, [orderId, fetchOrderById]);
-
-    // if (isFetching) return <p>Loading...</p>
-    // if (error) return <p>Error fetching order details</p>;
-
     const initialValuesAccept = {
         amount: ''
     };
@@ -180,8 +177,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
             }
         };
         try {
-            const placeBidResponse = await placeBid(placeBidPayload).unwrap
-            console.log("placeBidResponse: ", placeBidResponse)
+            await placeBid(placeBidPayload).unwrap
         } catch (error) {
             console.log("Getting Error While Placing the Bid to Order: ", error)
         }
@@ -291,12 +287,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                             {(from === 'order-overview' || from === 'order-bidding') && (
                                                 <> | Cost: ₹{allocation?.cost?.toFixed(2)}</>
                                             )}
-
                                         </Typography>
-                                        {/* <Typography variant="body2" color="#F08C24" sx={{ fontSize: 11, backgroundColor: '#FCF0DE', paddingLeft: 2, paddingRight: 2, paddingTop: 0.7, paddingBottom: 0.3, borderRadius: 1.5 }}>
-                                            {order?.order?.order_status}
-                                        </Typography> */}
-
                                     </Grid>
 
                                     <Typography variant="body2">

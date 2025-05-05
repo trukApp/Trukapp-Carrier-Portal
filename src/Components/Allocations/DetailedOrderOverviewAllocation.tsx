@@ -641,54 +641,6 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                     ) : (
                                         null
                                     )}
-                                    {/* <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
-                                        {!assignedOrder?.data[0]?.allocated_vehicles?.some(
-                                            (vehicle: string) => vehicle === allocation.vehicle_ID
-                                        ) && (
-                                                null
-
-                                            )}
-
-                                        {assignedOrder?.data[0]?.allocated_vehicles?.some(
-                                            (vehicle: string) => vehicle === allocation.vehicle_ID
-                                        ) && (
-                                                <>
-                                                    <>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => setOpenAcceptCarrier(true)}
-                                                        >
-                                                            Accept
-                                                        </Button>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={handleOpenDialog}
-                                                        >
-                                                            Reject
-                                                        </Button>
-                                                    </>
-                                                    {order?.order?.order_status === "finished" ? (
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => handleRouteReply(allocation.vehicle_ID)}
-                                                        >
-                                                            Route Reply
-                                                        </Button>
-                                                    ) : (order?.order?.order_status !== "carrier assignment") ? (
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => handleTrack(allocation)}
-                                                        >
-                                                            View Track
-                                                        </Button>
-                                                    ) : null}
-                                                </>
-                                            )}
-                                    </Box> */}
                                 </Box>
                             </Collapse>
                         </Paper></>

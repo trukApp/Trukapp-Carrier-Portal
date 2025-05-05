@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { useGetAllCarrierPlacedBidsOrdersQuery, useGetOrderByIdQuery } from "@/api/apiSlice";
+import { useGetAllCarrierPlacedBidsOrdersQuery, useGetLocationMasterQuery, useGetOrderByIdQuery } from "@/api/apiSlice";
 import { Backdrop, CircularProgress, Grid, Paper, Typography, Box } from "@mui/material";
 import OrderBidOverviewAllocation from "@/Components/Allocations/OrderBidOverviewAllocation";
 import { CarrierBidData } from "@/types/types";
@@ -15,12 +15,14 @@ const OrderDetailedOverview: React.FC = () => {
     const orderId = useAppSelector((state) => state.auth.orderID)
     const from = searchParams.get('from') ?? '';
     const { data: order, isLoading } = useGetOrderByIdQuery({ orderId });
+    const { data: locationsData } = useGetLocationMasterQuery({});
+    const getAllLocations = locationsData?.locations.length > 0 ? locationsData?.locations : [];
     const { data: getAllBids, isLoading: biddingLoading } = useGetAllCarrierPlacedBidsOrdersQuery(orderId);
     const isCarrirerBidded = getAllBids?.data[0]?.all_bids.filter((eachEahCarrier: CarrierBidData) => {
         return eachEahCarrier?.bid_from === carrierIdFromRedux
     })
-    console.log("isCarrirerBidded: ", isCarrirerBidded)
-    console.log("getAllBids: ", getAllBids?.data[0])
+    // console.log("isCarrirerBidded: ", isCarrirerBidded)
+    // console.log("getAllBids: ", getAllBids?.data[0])
     const orderData = order?.order;
     const allocatedPackageDetails = order?.allocated_packages_details
     return (
@@ -50,7 +52,7 @@ const OrderDetailedOverview: React.FC = () => {
                 </Paper>
             )}
 
-            {orderData?.allocations && <OrderBidOverviewAllocation allocations={orderData.allocations} orderId={orderData.order_ID} allocatedPackageDetails={allocatedPackageDetails} from={from} bidID={bidID} isCarrirerBidded={isCarrirerBidded} />}
+            {orderData?.allocations && <OrderBidOverviewAllocation allocations={orderData.allocations} orderId={orderData.order_ID} allocatedPackageDetails={allocatedPackageDetails} from={from} bidID={bidID} isCarrirerBidded={isCarrirerBidded} getAllLocations={getAllLocations} />}
         </Box>
     );
 };
