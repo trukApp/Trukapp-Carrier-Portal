@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/Store';
 
 
 interface CarrierAssignment {
@@ -39,15 +40,15 @@ interface CarrierAssignment {
 const OrderRequests: React.FC = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false)
-    const carrier_ID = 'CR000008';
+    const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
     const { data: carrierAssignments, isLoading: carrLoading } =
-        useGetCarrierAssignmentReqQuery({ carrier_ID });
+        useGetCarrierAssignmentReqQuery({ carrierIdFromRedux });
 
     const assignments = carrierAssignments?.assignments || [];
 
     const handleNavigateToOrder = (orderId: string) => {
         setLoading(true)
-        router.push(`/detailed-carrier-overview?order_ID=${orderId}&from=${carrier_ID}`);
+        router.push(`/detailed-carrier-overview?order_ID=${orderId}&from=${carrierIdFromRedux}`);
     }
     const columns: GridColDef[] = [
         { field: 'id', headerName: '#', width: 70 },
