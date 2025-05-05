@@ -22,9 +22,11 @@ const OrderDetailedOverview: React.FC = () => {
         : [];
 
     const { data: getAllBids, isLoading: biddingLoading } = useGetAllCarrierPlacedBidsOrdersQuery(orderId);
-    const isCarrirerBidded = getAllBids?.data[0]?.all_bids.filter((eachEahCarrier: CarrierBidData) => {
-        return eachEahCarrier?.bid_from === carrierIdFromRedux
-    })
+    const allBids = getAllBids?.data?.[0]?.all_bids;
+    const isCarrirerBidded = Array.isArray(allBids)
+        ? allBids.filter((eachEahCarrier: CarrierBidData) => eachEahCarrier?.bid_from === carrierIdFromRedux)
+        : [];
+
     // console.log("isCarrirerBidded: ", isCarrirerBidded)
     // console.log("getAllBids: ", getAllBids?.data[0])
     const orderData = order?.order;
