@@ -3,7 +3,7 @@ import { Box, Collapse, IconButton, Paper, Typography, Button, useTheme, useMedi
 import Grid from '@mui/material/Grid';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { useGetAllProductsQuery, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation } from "@/api/apiSlice";
+import { useGetAllProductsQuery, useGetCarrierAssignmentByOrderIdQuery, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation } from "@/api/apiSlice";
 import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
 import moment from 'moment';
 import Image from "next/image";
@@ -93,7 +93,6 @@ interface Location {
 }
 
 const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from }) => {
-    console.log("fromm :", from)
     const [openReject, setOpenReject] = useState(false);
     // const { refetch: refetchOrderById } = useGetOrderByIdQuery({ orderId }, { skip: true });
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -130,6 +129,12 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         { orderId },
         { skip: !orderId }
     );
+    console.log("orderId: ", orderId)
+
+    const { data: getAssignmentDetails, isLoading: isAssignmentLoading, error: isAssignmentError } = useGetCarrierAssignmentByOrderIdQuery(orderId);
+    const costForAssigment = getAssignmentDetails?.data[0]?.assignment_cost?.cost
+    console.log("getAssignmentDetails: ", costForAssigment)
+    console.log("assigment error: ", isAssignmentError)
 
     const getProductDetails = (productID: string) => {
         const productInfo = allProductsData.find((product: ProductDetails) => product.product_ID === productID);
@@ -160,6 +165,8 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         handleRejectByCarrier();
         handleCloseReject();
     };
+
+    console.log("order: ", order)
 
     const handleRejectByCarrier = async () => {
         const carrierIdForOrder = from   // from is the carrier id which we are getting via params when comig from order req for carrier page
@@ -247,7 +254,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                     color: "#ffffff",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                 }}
-                open={isRejecting || isAssignConfirm}
+                open={isRejecting || isAssignConfirm || isAssignmentLoading}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -484,7 +491,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                     </Typography>
                                                     <Grid sx={{ overflowX: "auto", whiteSpace: "nowrap" }}>
                                                         <Grid container spacing={2} sx={{ minWidth: '1000px', display: 'flex', justifyContent: 'space-between' }}   >
-                                                            <Grid   >
+                                                            <Grid style={{ marginLeft: '20px' }}>
                                                                 <Typography color="#F08C24" style={{ fontWeight: 'bold', fontSize: '15px', marginTop: '15px', marginBottom: '5px' }}>Billing Details</Typography>
                                                                 <Grid  >
                                                                     <Typography variant="body2">
@@ -639,7 +646,22 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                         </Box>
 
                                     ) : (
-                                        null
+                                        order?.order?.order_status === "open bidding" ? (
+                                            <>
+                                                <Typography color="#00000" style={{ fontSize: '15px', marginTop: '15px', marginBottom: '5px', textAlign: 'center' }}>The Bid is finalized for cost   <span style={{ color: '#F08C24', fontWeight: 'bold' }}>
+                                                    {costForAssigment}
+                                                </span></Typography>
+                                                <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3, }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={() => setOpenAcceptCarrier(true)}
+                                                    >
+                                                        Accept
+                                                    </Button>
+                                                </Box>
+                                            </>
+                                        ) : null
                                     )}
                                 </Box>
                             </Collapse>

@@ -107,6 +107,14 @@ export const apiSlice = createApi({
             providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
         }),
 
+        getCarrierAssignmentByOrderId: builder.query({
+            query: (orderID) => ({
+                url: `carrier-assignment/assigned-order-by-id?order_ID=${orderID}`,
+                method: "GET",
+            }),
+            providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+        }),
+
         getAllOrders: builder.query({
             query: (params) => ({
                 url: `order/all-orders`,
@@ -158,5 +166,6 @@ export const {
     useGetAllOrdersQuery,
     useGetAllBiddingOrdersQuery,
     usePlacingTheBidForOrderMutation,
-    useGetAllCarrierPlacedBidsOrdersQuery
+    useGetAllCarrierPlacedBidsOrdersQuery,
+    useGetCarrierAssignmentByOrderIdQuery
 } = apiSlice;
