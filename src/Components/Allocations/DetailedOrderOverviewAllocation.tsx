@@ -3,7 +3,7 @@ import { Box, Collapse, IconButton, Paper, Typography, Button, useTheme, useMedi
 import Grid from "@mui/material/Grid";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { useDockRequestingToPickOrderMutation, useGetAllProductsQuery, useGetCarrierAssignmentByOrderIdQuery, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation, } from "@/api/apiSlice";
+import { useDockRequestingToPickOrderMutation, useGetAllProductsQuery, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation, } from "@/api/apiSlice";
 import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
 import moment from "moment";
 import Image from "next/image";
@@ -62,15 +62,15 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         isFetching,
         error,
     } = useGetOrderByIdQuery({ orderId }, { skip: !orderId });
-    const {
-        data: getAssignmentDetails,
-        isLoading: isAssignmentLoading,
-        error: isAssignmentError,
-    } = useGetCarrierAssignmentByOrderIdQuery(orderId);
-    const costForAssigment = getAssignmentDetails?.data[0]?.assignment_cost?.cost;
-    if (isAssignmentError) {
-        console.log("assigment error: ", isAssignmentError);
-    }
+    // const {
+    //     data: getAssignmentDetails,
+    //     isLoading: isAssignmentLoading,
+    //     error: isAssignmentError,
+    // } = useGetCarrierAssignmentByOrderIdQuery(orderId);
+    // const costForAssigment = getAssignmentDetails?.data[0]?.assignment_cost?.cost;
+    // if (isAssignmentError) {
+    //     console.log("assigment error: ", isAssignmentError);
+    // }
 
     const getProductDetails = (productID: string) => {
         const productInfo = allProductsData.find(
@@ -219,7 +219,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         <Box>
             <Backdrop
                 sx={{ color: "#ffffff", zIndex: (theme) => theme.zIndex.drawer + 1, }}
-                open={isRejecting || isAssignConfirm || isAssignmentLoading || dockRequestLoading}
+                open={isRejecting || isAssignConfirm || dockRequestLoading}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>

@@ -10,6 +10,7 @@ import { useAppSelector } from '@/Store';
 const DockerManagement = () => {
     const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
     const router = useRouter();
+    console.log("carrierIdFromRedux: ", carrierIdFromRedux)
     const [loading, setLoading] = useState(false);
 
 
