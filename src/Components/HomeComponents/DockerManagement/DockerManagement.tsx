@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/Store';
 
 
-const TransportExecution = () => {
+const DockerManagement = () => {
     const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ const TransportExecution = () => {
 
             <Box>
                 <Typography variant="h6" sx={{ mt: 1, mb: 1, color: '#F08C24', fontWeight: 'bold' }}>
-                    Transport Execution
+                    Docker Management
                 </Typography>
                 <Box
                     sx={{
@@ -104,4 +104,4 @@ const TransportExecution = () => {
     );
 };
 
-export default TransportExecution;
+export default DockerManagement;
