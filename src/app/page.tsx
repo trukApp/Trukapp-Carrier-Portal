@@ -2,7 +2,7 @@
 
 import React from "react";
 import TransportExecution from "@/Components/HomeComponents/TransportExecution/TransportExecution";
-import DockerManagement from "../Components/HomeComponents/DockerManagement/DockerManagement";
+// import DockerManagement from "../Components/HomeComponents/DockerManagement/DockerManagement";
 import { Grid } from '@mui/material';
 import {
   useAppDispatch,
@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <Grid sx={{ padding: '15px' }}>
       <TransportExecution />
-      <DockerManagement />
+      {/* <DockerManagement /> */}
     </Grid>
   );
 }
