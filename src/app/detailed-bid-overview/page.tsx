@@ -27,8 +27,6 @@ const OrderDetailedOverview: React.FC = () => {
         ? allBids.filter((eachEahCarrier: CarrierBidData) => eachEahCarrier?.bid_from === carrierIdFromRedux)
         : [];
 
-    console.log("isCarrirerBidded: ", isCarrirerBidded)
-    // console.log("getAllBids: ", getAllBids?.data[0])
     const orderData = order?.order;
     const allocatedPackageDetails = order?.allocated_packages_details
     return (

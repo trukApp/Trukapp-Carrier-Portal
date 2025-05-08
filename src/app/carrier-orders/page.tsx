@@ -77,7 +77,7 @@ const CarrierOrdersPage: React.FC = () => {
         },
         { field: 'vehicle_num', headerName: 'Vehicle Number', width: 160 },
         { field: 'total_distance', headerName: 'Distance (km)', width: 130 },
-        { field: 'confirmed_to', headerName: 'Confirmed To', width: 130 },
+        // { field: 'confirmed_to', headerName: 'Confirmed To', width: 130 },
         {
             field: 'view',
             headerName: 'View',

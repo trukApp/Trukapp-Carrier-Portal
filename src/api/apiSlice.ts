@@ -73,10 +73,9 @@ export const apiSlice = createApi({
         }),
 
         getCarrierAssignmentReq: builder.query({
-            query: (params) => ({
-                url: `carrier-assignment/carrier-assignments`,
+            query: (carrierId) => ({
+                url: `carrier-assignment/carrier-assignments?carrier_ID=${carrierId}`,
                 method: "GET",
-                params,
             }),
             providesTags: [{ type: "Orderss", id: "LIST" }]
         }),
@@ -114,6 +113,26 @@ export const apiSlice = createApi({
             }),
             providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
         }),
+
+        // dockRequestingToPickOrder: builder.mutation({
+        //     query: ({ requestBody }) => ({
+        //         url: `carrier-assignment/schedule-dock-time`,
+        //         method: "PUT",
+        //         requestBody,
+        //     }),
+        //     invalidatesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+        // }),
+
+
+        dockRequestingToPickOrder: builder.mutation({
+            query: (requestBody) => ({
+                url: `carrier-assignment/schedule-dock-time`,
+                method: "PUT",
+                body: requestBody,
+            }),
+            invalidatesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+        }),
+
 
         getAllOrders: builder.query({
             query: (params) => ({
@@ -167,5 +186,6 @@ export const {
     useGetAllBiddingOrdersQuery,
     usePlacingTheBidForOrderMutation,
     useGetAllCarrierPlacedBidsOrdersQuery,
-    useGetCarrierAssignmentByOrderIdQuery
+    useGetCarrierAssignmentByOrderIdQuery,
+    useDockRequestingToPickOrderMutation
 } = apiSlice;

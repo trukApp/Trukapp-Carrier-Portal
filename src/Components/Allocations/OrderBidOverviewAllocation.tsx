@@ -288,6 +288,17 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                 <> | Cost: ₹{allocation?.cost?.toFixed(2)}</>
                                             )}
                                         </Typography>
+                                        {carrierBids.length > 0 && (
+                                            <Typography
+                                                // sx={{ mt: 3, textAlign: isMobile ? "center" : "right" }} 
+                                                sx={{ textAlign: isMobile ? "center" : "right", fontSize: 12, color: 'primary.main', backgroundColor: '#FCF0DE', paddingLeft: 2, paddingRight: 2, paddingTop: 0.7, paddingBottom: 0.3, borderRadius: 1.5 }}
+                                            >
+                                                You bid for this amount{" "}
+                                                <Box component="span" sx={{ color: "primary.main", fontSize: 13, fontWeight: "bold" }}>
+                                                    {carrierBids[0]?.bid_amount}/-
+                                                </Box>
+                                            </Typography>
+                                        )}
                                     </Grid>
 
                                     <Typography variant="body2">
@@ -500,7 +511,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                 </Grid>
                                             </Box>
                                         ))}
-                                    {/* {isCarrirerBidded.length > 0 ? null : (
+                                    {isCarrirerBidded.length > 0 ? null : (
                                         <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
                                             <Button
                                                 variant="contained"
@@ -510,9 +521,9 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                 Accept
                                             </Button>
                                         </Box>
-                                    )} */}
+                                    )}
 
-                                    {carrierBids.length > 0 ? (
+                                    {/* {carrierBids.length > 0 ? (
                                         <Typography sx={{ mt: 3, textAlign: isMobile ? "center" : "right" }}>
                                             You bid for this amount{" "}
                                             <Box component="span" sx={{ color: "primary.main", fontWeight: "bold" }}>
@@ -529,7 +540,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                 Accept
                                             </Button>
                                         </Box>
-                                    )}
+                                    )} */}
 
 
                                 </Box>

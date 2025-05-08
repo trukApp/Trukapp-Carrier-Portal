@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { useGetOrderByIdQuery } from "@/api/apiSlice";
+import { useGetCarrierAssignmentByOrderIdQuery, useGetOrderByIdQuery } from "@/api/apiSlice";
 import { Backdrop, CircularProgress, Paper, Typography, Box } from "@mui/material";
 import Allocations from "@/Components/Allocations/DetailedOrderOverviewAllocation";
 import { useSearchParams } from 'next/navigation';
@@ -11,12 +11,19 @@ const OrderDetailedOverview: React.FC = () => {
     const orderId = searchParams.get('order_ID') || '';
     const from = searchParams.get('from') ?? '';
     const { data: order, isLoading } = useGetOrderByIdQuery({ orderId });
+    const { data: getAssignmentDetails, isLoading: isAssignmentLoading, error: isAssignmentError } = useGetCarrierAssignmentByOrderIdQuery(orderId);
+    const getAssignmentData = getAssignmentDetails?.data[0]
+    console.log("getAssignmentData: ", getAssignmentData)
     const orderData = order?.order;
     const allocatedPackageDetails = order?.allocated_packages_details
 
+    if (isAssignmentError) {
+        console.log("Getting while fecting carrier assigment details: ", isAssignmentError)
+    }
+
     return (
         <Box sx={{ p: { xs: 0.2, md: 3 } }}>
-            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
+            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading || isAssignmentLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
             {orderData && (
@@ -42,7 +49,7 @@ const OrderDetailedOverview: React.FC = () => {
                 </Paper>
             )}
 
-            {orderData?.allocations && <Allocations allocations={orderData.allocations} orderId={orderData.order_ID} allocatedPackageDetails={allocatedPackageDetails} from={from} />}
+            {orderData?.allocations && <Allocations allocations={orderData.allocations} orderId={orderData.order_ID} allocatedPackageDetails={allocatedPackageDetails} from={from} assignmentData={getAssignmentData} />}
         </Box>
     );
 };
