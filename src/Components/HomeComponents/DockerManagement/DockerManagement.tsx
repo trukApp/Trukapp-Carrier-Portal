@@ -8,7 +8,7 @@ import { useAppSelector } from '@/Store';
 
 
 const DockerManagement = () => {
-    // const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
+    const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -23,7 +23,7 @@ const DockerManagement = () => {
         {
             title: 'Docker Timings',
             icon: <LocalShipping sx={{ fontSize: { xs: 40, sm: 50, md: 60, lg: 70 } }} />,
-            // onClick: () => handleNavigation('/order-bidding'),
+            onClick: () => handleNavigation('/order-bidding'),
         },
         // {
         //     title: 'Order requests',
@@ -65,7 +65,7 @@ const DockerManagement = () => {
                     {tiles.map((tile, index) => (
                         <Card
                             key={index}
-                            // onClick={tile.onClick}
+                            onClick={tile.onClick}
                             sx={{
                                 p: 2,
                                 display: 'flex',
