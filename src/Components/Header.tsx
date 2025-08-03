@@ -11,6 +11,7 @@ import {
     Button,
     useTheme,
     useMediaQuery,
+    Typography,
 } from "@mui/material";
 import Image from "next/image";
 import {
@@ -78,15 +79,23 @@ const Header = () => {
         <>
             <AppBar position="fixed" sx={{ backgroundColor: 'whitesmoke' }}>
                 <Toolbar>
-                    <Grid sx={{ flexGrow: 1, cursor: "pointer" }} onClick={handleNavigationToHomePage}>
-                        <Image
-                            src="/TrukAppLogo.png"
-                            alt="Logo"
-                            width={125}
-                            height={43}
-                            unoptimized
-                        />
-                    </Grid>
+                    <>
+                        <Grid sx={{ flexGrow: 1, cursor: "pointer", display: 'flex', flexDirection: 'row' }} onClick={handleNavigationToHomePage}>
+                            <Image
+                                src="/TrukAppLogo.png"
+                                alt="Logo"
+                                width={125}
+                                height={43}
+                                unoptimized
+                            />  {session && (
+                                <Grid >
+                                    <Typography >Your id: {session?.user?.id}</Typography>
+                                </Grid>
+                            )}
+                        </Grid>
+
+                    </>
+
 
                     {!isAuthPage && !session ? (
                         <>
@@ -96,9 +105,10 @@ const Header = () => {
                         </>
                     ) : (
                         session && (
-                            <Grid>
+                            <Grid  >
                                 {/* Desktop View */}
-                                {!isMobile && (
+                                {!isMobile && (<>
+
                                     <div className="hidden md:flex space-x-4">
                                         <IconButton
                                             sx={{
@@ -141,6 +151,8 @@ const Header = () => {
                                             )}
                                         </IconButton>
                                     </div>
+                                </>
+
                                 )}
 
 

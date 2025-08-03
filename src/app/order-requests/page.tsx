@@ -13,6 +13,7 @@ import {
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/Store';
+import { withAuthComponent } from '@/Components/WithAuthComponent';
 
 
 interface CarrierAssignment {
@@ -169,4 +170,4 @@ const OrderRequests: React.FC = () => {
     );
 };
 
-export default OrderRequests;
+export default withAuthComponent(OrderRequests);

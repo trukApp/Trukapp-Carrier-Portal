@@ -891,7 +891,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                                 >
                                                                     Products:
                                                                 </Typography>
-                                                                {pkg.product_ID.map(
+                                                                {pkg.product_lines.map(
                                                                     (prod: Product, index: number) => (
                                                                         <Typography
                                                                             key={index}
@@ -966,37 +966,38 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                 </Button>
                                             </Box>
                                         </>
-                                    ) : assignmentData?.dock_allocation_status === "requested" ? (
-                                        <Typography
-                                            color="#00000"
-                                            style={{
-                                                fontSize: "15px",
-                                                marginTop: "15px",
-                                                marginBottom: "5px",
-                                                textAlign: "center",
-                                                fontWeight: 'bold'
-                                            }}
-                                        >
-                                            Dock requested successfully, waiting for confirmation
-                                        </Typography>
-                                    ) : assignmentData?.assignment_status && assignmentData?.assignment_status ? (
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                justifyContent: isMobile ? "center" : "flex-end",
-                                                mt: 3,
-                                                gap: 3,
-                                            }}
-                                        >
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => setOpenDockRequest(true)}
+                                    ) : assignmentData?.dock_allocation_status === "allocated" ? (null) :
+                                        assignmentData?.dock_allocation_status === "requested" ? (
+                                            <Typography
+                                                color="#00000"
+                                                style={{
+                                                    fontSize: "15px",
+                                                    marginTop: "15px",
+                                                    marginBottom: "5px",
+                                                    textAlign: "center",
+                                                    fontWeight: 'bold'
+                                                }}
                                             >
-                                                Request for dock
-                                            </Button>
-                                        </Box>
-                                    ) : null}
+                                                Dock requested successfully, waiting for confirmation
+                                            </Typography>
+                                        ) : assignmentData?.assignment_status && assignmentData?.assignment_status ? (
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: isMobile ? "center" : "flex-end",
+                                                    mt: 3,
+                                                    gap: 3,
+                                                }}
+                                            >
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={() => setOpenDockRequest(true)}
+                                                >
+                                                    Request for dock
+                                                </Button>
+                                            </Box>
+                                        ) : null}
                                 </Box>
                             </Collapse>
                         </Paper>

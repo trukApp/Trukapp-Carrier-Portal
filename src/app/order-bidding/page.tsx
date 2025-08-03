@@ -4,11 +4,12 @@ import React, { useState } from 'react'
 import { CarrierBidOrder } from '@/types/types';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import moment from 'moment';
-import { Backdrop, CircularProgress, IconButton } from '@mui/material';
+import { Backdrop, Box, CircularProgress, IconButton, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { Visibility } from '@mui/icons-material';
 import { useAppSelector, useAppDispatch } from '@/Store';
 import { setOrderID } from '@/Store/authSlice';
+import { withAuthComponent } from '@/Components/WithAuthComponent';
 
 const OrderBidding: React.FC = () => {
     const router = useRouter();
@@ -62,6 +63,14 @@ const OrderBidding: React.FC = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
+            <Box mb={2} mt={3}>
+                <Typography variant="h5" fontWeight={600} gutterBottom color='primary'>
+                    Order Bidding Overview
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                    View and manage all your current bid submissions across available orders. Track bid values, timelines, allocation details, and order statuses in one centralized view. Click the eye icon to see full bid and order details.
+                </Typography>
+            </Box>
             <DataGrid
                 rows={allOrdersBidding.map((order: CarrierBidOrder, index: number) => ({
                     id: order.bid_id || index,
@@ -89,4 +98,4 @@ const OrderBidding: React.FC = () => {
     )
 }
 
-export default OrderBidding
+export default withAuthComponent(OrderBidding)

@@ -153,6 +153,7 @@ interface TaxInfo {
 }
 
 export interface PackageDetails {
+    product_lines: any;
     pac_id: number;
     pack_ID: string;
     ship_from: string;
