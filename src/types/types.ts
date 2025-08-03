@@ -152,8 +152,14 @@ interface TaxInfo {
     self_transport: string;
 }
 
+interface ProductLine {
+    prod_ID: string;
+    quantity: number;
+    package_info: string;
+}
+
 export interface PackageDetails {
-    product_lines: any;
+    product_lines: ProductLine[];
     pac_id: number;
     pack_ID: string;
     ship_from: string;
