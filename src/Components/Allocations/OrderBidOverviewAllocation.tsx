@@ -73,7 +73,13 @@ interface TaxInformation {
     self_transport: string;
     tax_rate: string;
 }
+interface ProductLine {
+    prod_ID: string;
+    quantity: number;
+    package_info: string;
+}
 interface PackageDetail {
+    product_lines: ProductLine[];
     pac_id: string;
     pack_ID: string;
     package_status: string;
