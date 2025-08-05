@@ -500,7 +500,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                                     <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                                                                         Products:
                                                                     </Typography>
-                                                                    {pkg.product_ID.map((prod: Product, index: number) => (
+                                                                    {pkg.product_lines.map((prod: Product, index: number) => (
                                                                         <Typography key={index} variant="body2" sx={{ ml: 2 }}>
                                                                             - {getProductDetails(prod.prod_ID)} (Qty: {prod.quantity})
                                                                         </Typography>
