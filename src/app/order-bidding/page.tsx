@@ -28,18 +28,18 @@ const OrderBidding: React.FC = () => {
     };
     const ordersColumns: GridColDef[] = [
         { field: 'order_ID', headerName: 'Order ID', width: 150 },
-        { field: 'bid_value', headerName: 'Bid Value (₹)', width: 150 },
+        // { field: 'bid_value', headerName: 'Bid Value (₹)', width: 150 },
         { field: 'bid_timing', headerName: 'Bid Timing', width: 150 },
         {
             field: 'bid_start_time',
             headerName: 'Bid Start Time',
             width: 180,
         },
-        { field: 'scenario_label', headerName: 'Scenario', width: 220 },
+        // { field: 'scenario_label', headerName: 'Scenario', width: 220 },
         { field: 'total_weight', headerName: 'Total Weight (kg)', width: 180 },
         { field: 'total_distance', headerName: 'Distance (km)', width: 150 },
-        { field: 'allocated_vehicles', headerName: 'Vehicles', width: 150 },
-        { field: 'allocated_packages', headerName: 'Packages', width: 150 },
+        // { field: 'allocated_vehicles', headerName: 'Vehicles', width: 150 },
+        // { field: 'allocated_packages', headerName: 'Packages', width: 150 },
         { field: 'order_status', headerName: 'Status', width: 180 },
         {
             field: 'view',

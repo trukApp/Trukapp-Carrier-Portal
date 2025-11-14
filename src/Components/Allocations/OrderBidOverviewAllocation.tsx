@@ -4,10 +4,10 @@ import Grid from '@mui/material/Grid';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 // import { useRouter } from 'next/navigation';
-import { useGetAllProductsQuery, usePlacingTheBidForOrderMutation } from "@/api/apiSlice";
+import { usePlacingTheBidForOrderMutation } from "@/api/apiSlice";
 // import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
 import moment from 'moment';
-import Image from "next/image";
+// import Image from "next/image";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 // import { useSelector } from "react-redux";
@@ -116,7 +116,7 @@ interface CarrierBid {
     bid_placed_at: string;
 }
 
-const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from, bidID, isCarrirerBidded, getAllLocations }) => {
+const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, bidID, isCarrirerBidded, getAllLocations }) => {
     const theme = useTheme();
     const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
     const carrierBids = isCarrirerBidded as CarrierBid[];
@@ -128,8 +128,8 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
     const [openAcceptCarrier, setOpenAcceptCarrier] = useState(false);
     const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
     const [placeBid, { isLoading: isAssignConfirm }] = usePlacingTheBidForOrderMutation()
-    const { data: productsData } = useGetAllProductsQuery({})
-    const allProductsData = productsData?.products || [];
+    // const { data: productsData } = useGetAllProductsQuery({})
+    // const allProductsData = productsData?.products || [];
     // const { data: locationsData } = useGetLocationMasterQuery({});
     // const getAllLocations = locationsData?.locations?.length > 0 ? locationsData?.locations : [];
     const getLocationDetails = (loc_ID: string) => {
@@ -146,19 +146,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
 
         return details.length > 0 ? details.join(", ") : "Location details not available";
     };
-
-    // const { data: order, refetch: fetchOrderById, isFetching, error } = useGetOrderByIdQuery(
-    //     { orderId },
-    //     { skip: !orderId }
-    // );
-
-    const getProductDetails = (productID: string) => {
-        const productInfo = allProductsData.find((product: ProductDetails) => product.product_ID === productID);
-        if (!productInfo) return "Package details not available";
-        const details = [productInfo.product_name, productInfo.product_ID].filter(Boolean);
-        return details.length > 0 ? details.join("-") : "Product details not available";
-    };
-
     const handleToggle = (vehicleId: string) => {
         setExpanded((prev) => ({ ...prev, [vehicleId]: !prev[vehicleId] }));
     };
@@ -201,13 +188,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            {/* <SnackbarAlert
-                open={snackbarOpen}
-                message={snackbarMessage}
-                severity={snackbarSeverity}
-                onClose={() => setSnackbarOpen(false)}
-            /> */}
-
             <Typography variant="h6" gutterBottom color="#F08C24" style={{ fontWeight: 'bold' }}>
                 Allocations
             </Typography>
@@ -288,12 +268,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                             <Grid container alignItems="center" justifyContent="space-between">
                                 <Grid sx={{ width: '97.5%' }}>
                                     <Grid sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
-                                        <Typography variant="subtitle1" color="#F08C24" style={{ fontWeight: 'bold' }}>
-                                            Vehicle: {allocation.vehicle_ID}
-                                            {(from === 'order-overview' || from === 'order-bidding') && (
-                                                <> | Cost: ₹{allocation?.cost?.toFixed(2)}</>
-                                            )}
-                                        </Typography>
                                         {carrierBids.length > 0 && (
                                             <Typography
                                                 // sx={{ mt: 3, textAlign: isMobile ? "center" : "right" }} 
@@ -331,34 +305,14 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                         boxShadow: 2
                                     }}
                                 >
-                                    <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }} color="#F08C24">
-                                        Vehicle ID: {allocation.vehicle_ID}
-                                    </Typography>
 
                                     <Box display="flex" flexWrap="wrap" gap={2}>
-                                        <Box flex="1 1 30%" >
-                                            <Typography variant="body2" >
-                                                Total Weight Capacity: <strong> {allocation.totalWeightCapacity.toFixed(2)}</strong>
-                                            </Typography>
+                                        <Box flex="1 1 30%" sx={{ display: 'flex' }}>
                                             <Typography variant="body2">
-                                                Total Volume Capacity: <strong>  {allocation.totalVolumeCapacity.toFixed(2)}</strong>
+                                                Total Weight:<strong>{allocation.occupiedWeight.toFixed(2)}</strong>
                                             </Typography>
-                                        </Box>
-                                        <Box flex="1 1 30%">
-                                            <Typography variant="body2">
-                                                Occupied Weight:<strong>{allocation.occupiedWeight.toFixed(2)}</strong>
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                Occupied Volume: <strong>{allocation.occupiedVolume ? (allocation?.occupiedVolume).toFixed(2) : "0.00"}</strong>
-                                            </Typography>
-                                        </Box>
-
-                                        <Box flex="1 1 30%">
-                                            <Typography variant="body2">
-                                                Leftover Weight: <strong> {allocation.leftoverWeight.toFixed(2)}</strong>
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                Leftover Volume: <strong> {allocation.leftoverVolume.toFixed(2)}</strong>
+                                            <Typography variant="body2" sx={{ marginLeft: '20px' }}>
+                                                Total Volume: <strong>{allocation.occupiedVolume ? (allocation?.occupiedVolume).toFixed(2) : "0.00"}</strong>
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -373,7 +327,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                         .filter((pkg: PackageDetail) => allocation.packages.includes(pkg.pack_ID))
                                         .map((pkg: PackageDetail) => (
                                             <Box key={pkg.pac_id} >
-                                                <Grid key={pkg.pac_id} sx={{ mt: { xs: 1, md: 2 }, p: 2, backgroundColor: '#e9e7e7', borderRadius: 1, }}>
+                                                <Grid key={pkg.pac_id} sx={{ mt: { xs: 1, md: 2 }, backgroundColor: '#e9e7e7', borderRadius: 1, p: 2 }}>
                                                     <Typography variant="subtitle2" gutterBottom>
                                                         <strong>Package ID: {pkg.pack_ID}</strong>
                                                     </Typography>
@@ -381,7 +335,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                     <Typography variant="body2">
                                                         <strong>Status:</strong> {pkg.package_status}
                                                     </Typography>
-                                                    <Grid sx={{ overflowX: "auto", whiteSpace: "nowrap" }}>
+                                                    <Grid sx={{ whiteSpace: "nowrap", p: 2 }}>
                                                         <Grid container spacing={2} sx={{ minWidth: '1000px', display: 'flex', justifyContent: 'space-between' }}   >
                                                             <Grid   >
                                                                 <Typography color="#F08C24" style={{ fontWeight: 'bold', fontSize: '15px', marginTop: '15px', marginBottom: '5px' }}>Billing Details</Typography>
@@ -408,7 +362,7 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                                     </Typography>
                                                                 </Grid>
                                                             </Grid>
-                                                            <Grid   >
+                                                            {/* <Grid  >
                                                                 <Typography color="#F08C24" style={{ fontWeight: 'bold', fontSize: '15px', marginTop: '15px', marginBottom: '5px' }}>Additional Info</Typography>
                                                                 <Grid >
                                                                     {pkg.additional_info?.reference_id && (
@@ -460,8 +414,8 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                                     )}
 
                                                                 </Grid>
-                                                            </Grid>
-                                                            <Grid   >
+                                                            </Grid> */}
+                                                            {/* <Grid   >
                                                                 <Typography color="#F08C24" style={{ fontWeight: 'bold', fontSize: '15px', marginTop: '15px', marginBottom: '5px' }}>Tax Info</Typography>
                                                                 <Grid >
                                                                     {pkg.tax_info?.sender_gst && (
@@ -499,8 +453,8 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                                     )}
 
                                                                 </Grid>
-                                                            </Grid>
-                                                            <Grid   >
+                                                            </Grid> */}
+                                                            {/* <Grid   >
                                                                 <Typography color="#F08C24" style={{ fontWeight: 'bold', fontSize: '15px', marginTop: '15px', marginBottom: '5px' }}>Product Details</Typography>
                                                                 <Box sx={{ mt: 1 }}>
                                                                     <Typography variant="body2" sx={{ fontWeight: "bold" }}>
@@ -512,8 +466,9 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                                                         </Typography>
                                                                     ))}
                                                                 </Box>
-                                                            </Grid>
-                                                        </Grid></Grid>
+                                                            </Grid> */}
+                                                        </Grid>
+                                                    </Grid>
                                                 </Grid>
                                             </Box>
                                         ))}
@@ -528,27 +483,6 @@ const OrderBidOverviewAllocation: React.FC<AllocationsProps> = ({ allocations, o
                                             </Button>
                                         </Box>
                                     )}
-
-                                    {/* {carrierBids.length > 0 ? (
-                                        <Typography sx={{ mt: 3, textAlign: isMobile ? "center" : "right" }}>
-                                            You bid for this amount{" "}
-                                            <Box component="span" sx={{ color: "primary.main", fontWeight: "bold" }}>
-                                                {carrierBids[0]?.bid_amount}/-
-                                            </Box>
-                                        </Typography>
-                                    ) : (
-                                        <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end", mt: 3, gap: 3 }}>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => setOpenAcceptCarrier(true)}
-                                            >
-                                                Accept
-                                            </Button>
-                                        </Box>
-                                    )} */}
-
-
                                 </Box>
                             </Collapse>
                         </Paper></>

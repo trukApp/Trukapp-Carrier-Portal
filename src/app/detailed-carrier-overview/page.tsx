@@ -39,9 +39,9 @@ const OrderDetailedOverview: React.FC = () => {
                         <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
                             <Typography variant="body1" sx={{ fontSize: { xs: '15px', md: '17px' } }}>Order ID: <strong>{orderData.order_ID}</strong></Typography>
                         </Box>
-                        <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
+                        {/* <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
                             <Typography variant="body1" sx={{ fontSize: { xs: '15px', md: '17px' } }}>Scenario:  <strong>{orderData.scenario_label}</strong> </Typography>
-                        </Box>
+                        </Box> */}
                         <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
                             <Typography variant="body1" sx={{ fontSize: { xs: '15px', md: '17px' } }}>Created at: <strong>{moment(orderData.created_at).format("DD MMM YYYY")}</strong></Typography>
                         </Box>

@@ -69,33 +69,33 @@ const OrderRequests: React.FC = () => {
                 />
             ),
         },
-        { field: 'scenario_label', headerName: 'Scenario', width: 180 },
+        // { field: 'scenario_label', headerName: 'Scenario', width: 180 },
         { field: 'assigned_time', headerName: 'Assigned Time', width: 180 },
         { field: 'confirmed_time', headerName: 'Confirmed Time', width: 180 },
-        {
-            field: 'allocated_vehicles',
-            headerName: 'Vehicles',
-            width: 180,
-            renderCell: (params) =>
-                params.value?.map((v: string, idx: number) => (
-                    <Chip key={idx} label={v} size="small" sx={{ mr: 0.5 }} />
-                )),
-        },
-        {
-            field: 'allocated_packages',
-            headerName: 'Packages',
-            width: 180,
-            renderCell: (params) =>
-                params.value?.map((p: string, idx: number) => (
-                    <Chip key={idx} label={p} size="small" sx={{ mr: 0.5 }} />
-                )),
-        },
+        // {
+        //     field: 'allocated_vehicles',
+        //     headerName: 'Vehicles',
+        //     width: 180,
+        //     renderCell: (params) =>
+        //         params.value?.map((v: string, idx: number) => (
+        //             <Chip key={idx} label={v} size="small" sx={{ mr: 0.5 }} />
+        //         )),
+        // },
+        // {
+        //     field: 'allocated_packages',
+        //     headerName: 'Packages',
+        //     width: 180,
+        //     renderCell: (params) =>
+        //         params.value?.map((p: string, idx: number) => (
+        //             <Chip key={idx} label={p} size="small" sx={{ mr: 0.5 }} />
+        //         )),
+        // },
         { field: 'start_loc_ID', headerName: 'Start Location', width: 150 },
         { field: 'end_loc_ID', headerName: 'End Location', width: 150 },
         { field: 'total_distance', headerName: 'Distance (km)', width: 130 },
         { field: 'confirmed_to', headerName: 'Confirmed To', width: 130 },
         { field: 'created_at', headerName: 'Created At', width: 210 },
-        { field: 'updated_at', headerName: 'Updated At', width: 210 },
+        // { field: 'updated_at', headerName: 'Updated At', width: 210 },
         {
             field: 'view',
             headerName: 'View',

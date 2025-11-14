@@ -88,8 +88,8 @@ const Header = () => {
                                 height={43}
                                 unoptimized
                             />  {session && (
-                                <Grid >
-                                    <Typography >Your id: {session?.user?.id}</Typography>
+                                <Grid sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Typography sx={{ marginLeft: '20px' }}>Your ID: {session?.user?.id}</Typography>
                                 </Grid>
                             )}
                         </Grid>

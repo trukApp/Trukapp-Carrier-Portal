@@ -3,20 +3,21 @@ import { Box, Collapse, IconButton, Paper, Typography, Button, useTheme, useMedi
 import Grid from "@mui/material/Grid";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { useDockRequestingToPickOrderMutation, useGetAllProductsQuery, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation, } from "@/api/apiSlice";
+import { useDockRequestingToPickOrderMutation, useGetLocationMasterQuery, useGetOrderByIdQuery, usePostCarrierAssigningOrderConfirmMutation, usePostCarrierRejectigOrderMutation, } from "@/api/apiSlice";
 import SnackbarAlert from "../ReusableComponents/SnackbarAlerts";
 import moment from "moment";
-import Image from "next/image";
+// import Image from "next/image";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import CloseIcon from "@mui/icons-material/Close";
-import { AllocationsProps, Product, ProductDetails, Location, PackageDetails } from "@/types/types";
+import { AllocationsProps, Location, PackageDetails } from "@/types/types";
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 
 const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocatedPackageDetails, from, assignmentData, }) => {
+    console.log("allocatedPackageDetails: ", allocatedPackageDetails)
     const getMaximumDateAndTimeToRequest = allocatedPackageDetails[0]?.pickup_date_time
     console.log("getMaximumDateAndTimeToRequest: ", getMaximumDateAndTimeToRequest)
     const [openReject, setOpenReject] = useState(false);
@@ -34,8 +35,8 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
         usePostCarrierRejectigOrderMutation();
     const [postAssignOrderByCarrier, { isLoading: isAssignConfirm }] =
         usePostCarrierAssigningOrderConfirmMutation();
-    const { data: productsData } = useGetAllProductsQuery({});
-    const allProductsData = productsData?.products || [];
+    // const { data: productsData } = useGetAllProductsQuery({});
+    // const allProductsData = productsData?.products || [];
     const { data: locationsData } = useGetLocationMasterQuery({});
     const getAllLocations =
         locationsData?.locations.length > 0 ? locationsData?.locations : [];
@@ -72,14 +73,14 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
     //     console.log("assigment error: ", isAssignmentError);
     // }
 
-    const getProductDetails = (productID: string) => {
-        const productInfo = allProductsData.find(
-            (product: ProductDetails) => product.product_ID === productID
-        );
-        if (!productInfo) return "Package details not available";
-        const details = [productInfo.product_name, productInfo.product_ID].filter(Boolean);
-        return details.length > 0 ? details.join("-") : "Product details not available";
-    };
+    // const getProductDetails = (productID: string) => {
+    //     const productInfo = allProductsData.find(
+    //         (product: ProductDetails) => product.product_ID === productID
+    //     );
+    //     if (!productInfo) return "Package details not available";
+    //     const details = [productInfo.product_name, productInfo.product_ID].filter(Boolean);
+    //     return details.length > 0 ? details.join("-") : "Product details not available";
+    // };
     console.log("assignmentData: ", assignmentData);
     const handleToggle = (vehicleId: string) => {
         setExpanded((prev) => ({ ...prev, [vehicleId]: !prev[vehicleId] }));
@@ -411,6 +412,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                 )}
                             </Formik>
                         </Dialog>
+
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <Dialog
                                 open={openDockRequest}
@@ -497,11 +499,11 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                         sx={{
                                             display: "flex",
                                             flexDirection: "row",
-                                            justifyContent: "space-between",
+                                            justifyContent: "flex-end",
                                             marginBottom: 2,
                                         }}
                                     >
-                                        <Typography
+                                        {/* <Typography
                                             variant="subtitle1"
                                             color="#F08C24"
                                             style={{ fontWeight: "bold" }}
@@ -511,7 +513,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                 from === "order-bidding") && (
                                                     <> | Cost: ₹{allocation?.cost?.toFixed(2)}</>
                                                 )}
-                                        </Typography>
+                                        </Typography> */}
                                         <Typography
                                             variant="body2"
                                             color="#F08C24"
@@ -523,6 +525,7 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                 paddingTop: 0.7,
                                                 paddingBottom: 0.3,
                                                 borderRadius: 1.5,
+                                                textTransform: "capitalize"
                                             }}
                                         >
                                             {order?.order?.order_status}
@@ -559,54 +562,19 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                         boxShadow: 2,
                                     }}
                                 >
-                                    <Typography
-                                        variant="h6"
-                                        sx={{ mb: 1, fontWeight: 600 }}
-                                        color="#F08C24"
-                                    >
-                                        Vehicle ID: {allocation.vehicle_ID}
-                                    </Typography>
-
                                     <Box display="flex" flexWrap="wrap" gap={2}>
                                         <Box flex="1 1 30%">
                                             <Typography variant="body2">
-                                                Total Weight Capacity:{" "}
-                                                <strong>
-                                                    {" "}
-                                                    {allocation.totalWeightCapacity.toFixed(2)}
-                                                </strong>
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                Total Volume Capacity:{" "}
-                                                <strong>
-                                                    {" "}
-                                                    {allocation.totalVolumeCapacity.toFixed(2)}
-                                                </strong>
-                                            </Typography>
-                                        </Box>
-                                        <Box flex="1 1 30%">
-                                            <Typography variant="body2">
-                                                Occupied Weight:
+                                                Total Weight:
                                                 <strong>{allocation.occupiedWeight.toFixed(2)}</strong>
                                             </Typography>
                                             <Typography variant="body2">
-                                                Occupied Volume:{" "}
+                                                Total Volume:{" "}
                                                 <strong>
                                                     {allocation.occupiedVolume
                                                         ? (allocation?.occupiedVolume).toFixed(2)
                                                         : "0.00"}
                                                 </strong>
-                                            </Typography>
-                                        </Box>
-
-                                        <Box flex="1 1 30%">
-                                            <Typography variant="body2">
-                                                Leftover Weight:{" "}
-                                                <strong> {allocation.leftoverWeight.toFixed(2)}</strong>
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                Leftover Volume:{" "}
-                                                <strong> {allocation.leftoverVolume.toFixed(2)}</strong>
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -715,195 +683,6 @@ const Allocations: React.FC<AllocationsProps> = ({ allocations, orderId, allocat
                                                                     </strong>
                                                                 </Typography>
                                                             </Grid>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Typography
-                                                                color="#F08C24"
-                                                                style={{
-                                                                    fontWeight: "bold",
-                                                                    fontSize: "15px",
-                                                                    marginTop: "15px",
-                                                                    marginBottom: "5px",
-                                                                }}
-                                                            >
-                                                                Additional Info
-                                                            </Typography>
-                                                            <Grid>
-                                                                {pkg.additional_info?.reference_id && (
-                                                                    <Typography variant="body2">
-                                                                        Refernce ID:{" "}
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.additional_info?.reference_id}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.additional_info?.invoice && (
-                                                                    <Typography variant="body2">
-                                                                        Invoice:
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.additional_info?.invoice}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.additional_info?.department && (
-                                                                    <Typography variant="body2">
-                                                                        Department:
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.additional_info?.department}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.additional_info?.sales_order_number && (
-                                                                    <Typography variant="body2">
-                                                                        Sales order number:{" "}
-                                                                        <strong>{" "}{pkg.additional_info?.sales_order_number}</strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.additional_info?.po_number && (
-                                                                    <Typography variant="body2">
-                                                                        Po number:{" "}
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.additional_info?.po_number}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-                                                                {pkg?.additional_info?.attachment && (
-                                                                    <div style={{ display: "flex" }}>
-                                                                        <Typography
-                                                                            variant="body2"
-                                                                            style={{ fontWeight: "bold" }}
-                                                                        >
-                                                                            Attachment:
-                                                                        </Typography>
-                                                                        <div
-                                                                            style={{
-                                                                                position: "relative",
-                                                                                width: "50px",
-                                                                                height: "45px",
-                                                                                marginTop: "5px",
-                                                                            }}
-                                                                        >
-                                                                            <Image
-                                                                                src={pkg?.additional_info?.attachment}
-                                                                                alt="Attachment"
-                                                                                fill
-                                                                                sizes="(max-width: 768px) 100vw, 300px"
-                                                                                style={{ objectFit: "contain" }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-                                                            </Grid>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Typography
-                                                                color="#F08C24"
-                                                                style={{
-                                                                    fontWeight: "bold",
-                                                                    fontSize: "15px",
-                                                                    marginTop: "15px",
-                                                                    marginBottom: "5px",
-                                                                }}
-                                                            >
-                                                                Tax Info
-                                                            </Typography>
-                                                            <Grid>
-                                                                {pkg.tax_info?.sender_gst && (
-                                                                    <Typography variant="body2">
-                                                                        GSTN of sender:
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.tax_info?.sender_gst}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.tax_info?.receiver_gst && (
-                                                                    <Typography variant="body2">
-                                                                        GSTN of receiver:{" "}
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.tax_info?.receiver_gst}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.tax_info?.carrier_gst && (
-                                                                    <Typography variant="body2">
-                                                                        GSTN of carrier:{" "}
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.tax_info?.carrier_gst}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-                                                                {pkg.tax_info?.self_transport && (
-                                                                    <Typography variant="body2">
-                                                                        Is self transport:{" "}
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.tax_info?.self_transport}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-                                                                {pkg.tax_info?.tax_rate && (
-                                                                    <Typography variant="body2">
-                                                                        Tax rate:{" "}
-                                                                        <strong> {pkg.tax_info?.tax_rate}</strong>
-                                                                    </Typography>
-                                                                )}
-
-                                                                {pkg.return_label && (
-                                                                    <Typography variant="body2">
-                                                                        Return Label:
-                                                                        <strong>
-                                                                            {" "}
-                                                                            {pkg.return_label ? "Yes" : "No"}
-                                                                        </strong>
-                                                                    </Typography>
-                                                                )}
-                                                            </Grid>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Typography
-                                                                color="#F08C24"
-                                                                style={{
-                                                                    fontWeight: "bold",
-                                                                    fontSize: "15px",
-                                                                    marginTop: "15px",
-                                                                    marginBottom: "5px",
-                                                                }}
-                                                            >
-                                                                Product Details
-                                                            </Typography>
-                                                            <Box sx={{ mt: 1 }}>
-                                                                <Typography
-                                                                    variant="body2"
-                                                                    sx={{ fontWeight: "bold" }}
-                                                                >
-                                                                    Products:
-                                                                </Typography>
-                                                                {pkg.product_lines.map(
-                                                                    (prod: Product, index: number) => (
-                                                                        <Typography
-                                                                            key={index}
-                                                                            variant="body2"
-                                                                            sx={{ ml: 2 }}
-                                                                        >
-                                                                            - {getProductDetails(prod.prod_ID)}{" "}
-                                                                            (Qty: {prod.quantity})
-                                                                        </Typography>
-                                                                    )
-                                                                )}
-                                                            </Box>
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>
