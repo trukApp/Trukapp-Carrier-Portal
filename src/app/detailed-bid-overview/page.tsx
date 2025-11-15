@@ -21,6 +21,7 @@ const OrderDetailedOverview: React.FC = () => {
         ? locationsData.locations
         : [];
 
+
     const { data: getAllBids, isLoading: biddingLoading } = useGetAllCarrierPlacedBidsOrdersQuery(orderId);
     const allBids = getAllBids?.data?.[0]?.all_bids;
     const isCarrirerBidded = Array.isArray(allBids)

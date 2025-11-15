@@ -28,6 +28,7 @@ export interface CarrierAssignment {
         cost_criteria_considered?: string;
     };
     confirmed_to?: string;
+    package_dest_radius: PackageDestRadius[]
 }
 
 
@@ -62,20 +63,30 @@ export interface Order {
     allocations: Allocation[];
     order_status: string
 }
+interface PackageDestRadius {
+    pack_ID: string;
+    ship_to: string;
+    destination_radius: string;
+}
 
 export interface CarrierBidOrder {
+    package_dest_radius: PackageDestRadius[];
+    start_loc_ID: string;
+    end_loc_ID: string;
     bid_id: number;
     order_ID: string;
     bid_value: string;
     bid_timing: string;
     bid_start_time: string;
     bid_end_time: string | null;
+    bid_closing_time: string;
     scenario_label: string;
     total_weight: string;
     total_distance: string;
     allocated_vehicles: string[];
     allocated_packages: string[];
     order_status: string;
+    bid_status: string;
 }
 
 export interface CarrierBidData {

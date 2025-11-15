@@ -16,6 +16,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { withAuthComponent } from '@/Components/WithAuthComponent';
 import { useAppSelector } from '@/Store';
 import { CarrierAssignment } from '@/types/types';
+import moment from 'moment';
 
 // Define a strict interface for assignment data
 const CarrierOrdersPage: React.FC = () => {
@@ -68,7 +69,7 @@ const CarrierOrdersPage: React.FC = () => {
         },
 
         { field: 'assigned_time', headerName: 'Assigned Time', width: 180 },
-        { field: 'confirmed_time', headerName: 'Confirmed Time', width: 180 },
+        // { field: 'confirmed_time', headerName: 'Confirmed Time', width: 180 },
         {
             field: 'driver_name',
             headerName: 'Driver',
@@ -96,8 +97,8 @@ const CarrierOrdersPage: React.FC = () => {
         cas_ID: item.cas_ID,
         order_ID: item.order_ID,
         assignment_status: item.assignment_status,
-        assigned_time: item.assigned_time,
-        confirmed_time: item.confirmed_time ?? '—',
+        assigned_time: moment(item.assigned_time).format('DD MMM YYYY, HH:mm') ?? '—',
+        // confirmed_time: moment(item.confirmed_time).format('DD MMM YYYY, HH:mm') ?? '—',
         driver_name: item.driver_data?.c_driver_name ?? '—',
         vehicle_num: item.vehicle_num ?? '—',
         total_distance: item.assignment_cost?.total_distance ?? 'N/A',

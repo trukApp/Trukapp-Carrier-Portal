@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { useGetCarrierAssignmentReqQuery } from '@/api/apiSlice';
+import { useGetCarrierAssignmentReqQuery, useGetLocationMasterQuery } from '@/api/apiSlice';
 import { Visibility } from '@mui/icons-material';
 import {
     Backdrop,
@@ -14,8 +14,14 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/Store';
 import { withAuthComponent } from '@/Components/WithAuthComponent';
+import moment from 'moment';
 
 
+interface PackageDestRadius {
+    pack_ID: string;
+    ship_to: string;
+    destination_radius: string;
+}
 interface CarrierAssignment {
     cas_ID: string;
     order_ID: string;
@@ -35,6 +41,7 @@ interface CarrierAssignment {
     confirmed_to?: string;
     created_at: string;
     updated_at: string;
+    package_dest_radius: PackageDestRadius[]
 }
 
 
@@ -45,6 +52,21 @@ const OrderRequests: React.FC = () => {
     const { data: carrierAssignments, isLoading: carrLoading } = useGetCarrierAssignmentReqQuery(carrierIdFromRedux);
 
     const assignments = carrierAssignments?.assignments || [];
+    console.log("Carrier Assignments Data:", assignments);
+
+    const { data: locationsData } = useGetLocationMasterQuery({});
+
+    const getAllLocations =
+        locationsData?.locations && locationsData.locations.length > 0
+            ? locationsData.locations
+            : [];
+
+    const getLocationName = (locId: string) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const found = getAllLocations.find((loc: any) => loc.loc_ID === locId);
+        return found ? found.city : locId;
+    };
+
 
     const handleNavigateToOrder = (orderId: string) => {
         setLoading(true)
@@ -72,26 +94,9 @@ const OrderRequests: React.FC = () => {
         // { field: 'scenario_label', headerName: 'Scenario', width: 180 },
         { field: 'assigned_time', headerName: 'Assigned Time', width: 180 },
         { field: 'confirmed_time', headerName: 'Confirmed Time', width: 180 },
-        // {
-        //     field: 'allocated_vehicles',
-        //     headerName: 'Vehicles',
-        //     width: 180,
-        //     renderCell: (params) =>
-        //         params.value?.map((v: string, idx: number) => (
-        //             <Chip key={idx} label={v} size="small" sx={{ mr: 0.5 }} />
-        //         )),
-        // },
-        // {
-        //     field: 'allocated_packages',
-        //     headerName: 'Packages',
-        //     width: 180,
-        //     renderCell: (params) =>
-        //         params.value?.map((p: string, idx: number) => (
-        //             <Chip key={idx} label={p} size="small" sx={{ mr: 0.5 }} />
-        //         )),
-        // },
         { field: 'start_loc_ID', headerName: 'Start Location', width: 150 },
         { field: 'end_loc_ID', headerName: 'End Location', width: 150 },
+        { field: 'drop_points', headerName: 'Drop Points', width: 240 },
         { field: 'total_distance', headerName: 'Distance (km)', width: 130 },
         { field: 'confirmed_to', headerName: 'Confirmed To', width: 130 },
         { field: 'created_at', headerName: 'Created At', width: 210 },
@@ -109,25 +114,56 @@ const OrderRequests: React.FC = () => {
         },
     ];
 
-    const rows = assignments.map((a: CarrierAssignment, idx: number) => ({
-        id: idx + 1,
-        cas_ID: a.cas_ID,
-        order_ID: a.order_ID,
-        assignment_status: a.assignment_status,
-        scenario_label: a.scenario_label,
-        assigned_time: a.assigned_time,
-        confirmed_time: a.confirmed_time || '—',
-        allocated_vehicles: a.allocated_vehicles || [],
-        allocated_packages: a.allocated_packages || [],
-        start_loc_ID: a.start_loc_ID,
-        end_loc_ID: a.end_loc_ID,
-        total_distance: a.assignment_cost?.total_distance || 'N/A',
-        // total_weight: a.assignment_cost?.total_weight || 'N/A',
-        cost_criteria_considered: a.assignment_cost?.cost_criteria_considered || 'N/A',
-        confirmed_to: a.confirmed_to || '—',
-        created_at: a.created_at,
-        updated_at: a.updated_at,
-    }));
+    const rows = assignments.map((a: CarrierAssignment, idx: number) => {
+        const dropPoints =
+            a.package_dest_radius
+                ?.map((p) => `${getLocationName(p.ship_to)}`)
+                .join(', ') || '—';
+
+        return {
+            id: idx + 1,
+            cas_ID: a.cas_ID,
+            order_ID: a.order_ID,
+            assignment_status: a.assignment_status,
+            scenario_label: a.scenario_label,
+            assigned_time: moment(a.assigned_time).format('DD MMM YYYY, HH:mm'),
+            confirmed_time: a.confirmed_time
+                ? moment(a.confirmed_time).format('DD MMM YYYY, HH:mm')
+                : '—',
+            allocated_vehicles: a.allocated_vehicles || [],
+            allocated_packages: a.allocated_packages || [],
+            start_loc_ID: getLocationName(a.start_loc_ID),
+            end_loc_ID: getLocationName(a.end_loc_ID),
+            total_distance: a.assignment_cost?.total_distance || 'N/A',
+            cost_criteria_considered:
+                a.assignment_cost?.cost_criteria_considered || 'N/A',
+            confirmed_to: a.confirmed_to || '—',
+            created_at: a.created_at,
+            updated_at: a.updated_at,
+            drop_points: dropPoints,
+        };
+    });
+
+
+    // const rows = assignments.map((a: CarrierAssignment, idx: number) => ({
+    //     id: idx + 1,
+    //     cas_ID: a.cas_ID,
+    //     order_ID: a.order_ID,
+    //     assignment_status: a.assignment_status,
+    //     scenario_label: a.scenario_label,
+    //     assigned_time: moment(a.assigned_time).format('DD MMM YYYY, HH:mm'),
+    //     confirmed_time: moment(a.confirmed_time).format('DD MMM YYYY, HH:mm') || '—',
+    //     allocated_vehicles: a.allocated_vehicles || [],
+    //     allocated_packages: a.allocated_packages || [],
+    //     start_loc_ID: a.start_loc_ID,
+    //     end_loc_ID: a.end_loc_ID,
+    //     total_distance: a.assignment_cost?.total_distance || 'N/A',
+    //     // total_weight: a.assignment_cost?.total_weight || 'N/A',
+    //     cost_criteria_considered: a.assignment_cost?.cost_criteria_considered || 'N/A',
+    //     confirmed_to: a.confirmed_to || '—',
+    //     created_at: a.created_at,
+    //     updated_at: a.updated_at,
+    // }));
 
     return (
         <>
