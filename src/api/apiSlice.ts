@@ -152,6 +152,14 @@ export const apiSlice = createApi({
             providesTags: [{ type: "Order Bidding", id: "LIST" }],
         }),
 
+        getAllFinalizedBiddings: builder.query({
+            query: (carrierId) => ({
+                url: `assignment-bid/finalised-bids?carrier_ID=${carrierId}`,
+                method: "GET",
+            }),
+            providesTags: [{ type: "Order Bidding", id: "LIST" }],
+        }),
+
         placingTheBidForOrder: builder.mutation({
             query: ({ body, bid_id, order_ID }) => ({
                 url: `assignment-bid/place-bid?bid_id=${bid_id}&order_ID=${order_ID}`,
@@ -187,5 +195,6 @@ export const {
     usePlacingTheBidForOrderMutation,
     useGetAllCarrierPlacedBidsOrdersQuery,
     useGetCarrierAssignmentByOrderIdQuery,
-    useDockRequestingToPickOrderMutation
+    useDockRequestingToPickOrderMutation,
+    useGetAllFinalizedBiddingsQuery
 } = apiSlice;

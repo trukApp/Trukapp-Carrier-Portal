@@ -70,6 +70,7 @@ interface PackageDestRadius {
 }
 
 export interface CarrierBidOrder {
+    all_bids: boolean;
     package_dest_radius: PackageDestRadius[];
     start_loc_ID: string;
     end_loc_ID: string;
