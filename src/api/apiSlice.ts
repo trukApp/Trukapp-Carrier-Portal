@@ -177,6 +177,24 @@ export const apiSlice = createApi({
             providesTags: [{ type: "Order Bidding", id: "LIST" }],
         }),
 
+        getBidByOrderId: builder.query({
+            query: ({ orderId }) => ({
+                url: `assignment-bid/bids-order-id?`,
+                method: "GET",
+                params: { order_ID: orderId },
+            }),
+            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }],
+        }),
+        getPackageByID: builder.query({
+            query: ({ Package_ID }) => ({
+                url: `products/packages/get-package`,
+                method: "GET",
+                params: { pack_ID: Package_ID },
+            }),
+            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }],
+        }),
+        
+
     }),
 
 });
@@ -196,5 +214,8 @@ export const {
     useGetAllCarrierPlacedBidsOrdersQuery,
     useGetCarrierAssignmentByOrderIdQuery,
     useDockRequestingToPickOrderMutation,
-    useGetAllFinalizedBiddingsQuery
+    useGetAllFinalizedBiddingsQuery,
+    useGetBidByOrderIdQuery,
+    useGetPackageByIDQuery,
+    useLazyGetPackageByIDQuery
 } = apiSlice;

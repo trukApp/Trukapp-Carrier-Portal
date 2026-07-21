@@ -1,31 +1,12 @@
-"use client"
+"use client";
 
-import React from "react";
-import TransportExecution from "@/Components/HomeComponents/TransportExecution/TransportExecution";
-// import DockerManagement from "../Components/HomeComponents/DockerManagement/DockerManagement";
-import { Grid } from '@mui/material';
-import {
-  useAppDispatch,
-  useAppSelector
-} from "@/Store";
-import { setCarrierId } from "@/Store/authSlice";
-import { useSession } from "next-auth/react";
+import DashboardLayout from "@/Components/Dashboard/DashboardLayout";
+import DashboardContent from "@/Components/Dashboard/DashboardContent";
 
-const Home = () => {
-  const carrierIdFromRedux = useAppSelector((state) => state.auth.carrierId)
-  const { data: session } = useSession();
-  const dispatch = useAppDispatch()
-  const carrierId = session?.user?.id
-  if (carrierId) {
-    dispatch(setCarrierId(carrierId))
-  }
-  console.log('carrierIdfromRedux home:', carrierIdFromRedux)
+export default function Home() {
   return (
-    <Grid sx={{ padding: '15px' }}>
-      <TransportExecution />
-      {/* <DockerManagement /> */}
-    </Grid>
+    <DashboardLayout>
+      <DashboardContent />
+    </DashboardLayout>
   );
 }
-
-export default Home
