@@ -114,16 +114,6 @@ export const apiSlice = createApi({
             providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
         }),
 
-        // dockRequestingToPickOrder: builder.mutation({
-        //     query: ({ requestBody }) => ({
-        //         url: `carrier-assignment/schedule-dock-time`,
-        //         method: "PUT",
-        //         requestBody,
-        //     }),
-        //     invalidatesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
-        // }),
-
-
         dockRequestingToPickOrder: builder.mutation({
             query: (requestBody) => ({
                 url: `carrier-assignment/schedule-dock-time`,
@@ -132,7 +122,6 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
         }),
-
 
         getAllOrders: builder.query({
             query: (params) => ({
@@ -183,7 +172,7 @@ export const apiSlice = createApi({
                 method: "GET",
                 params: { order_ID: orderId },
             }),
-            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }],
+            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }, { type: "Order Bidding", id: "LIST" }],
         }),
         getPackageByID: builder.query({
             query: ({ Package_ID }) => ({
@@ -191,10 +180,8 @@ export const apiSlice = createApi({
                 method: "GET",
                 params: { pack_ID: Package_ID },
             }),
-            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }],
+            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }, { type: "Order Bidding", id: "LIST" }],
         }),
-        
-
     }),
 
 });

@@ -1,57 +1,80 @@
-'use client';
-import React from "react";
-import { useGetCarrierAssignmentByOrderIdQuery, useGetOrderByIdQuery } from "@/api/apiSlice";
-import { Backdrop, CircularProgress, Paper, Typography, Box } from "@mui/material";
-import Allocations from "@/Components/Allocations/DetailedOrderOverviewAllocation";
-import { useSearchParams } from 'next/navigation';
-import moment from "moment";
+"use client";
 
-const OrderDetailedOverview: React.FC = () => {
-    const searchParams = useSearchParams();
-    const orderId = searchParams.get('order_ID') || '';
-    const from = searchParams.get('from') ?? '';
-    const { data: order, isLoading } = useGetOrderByIdQuery({ orderId });
-    const { data: getAssignmentDetails, isLoading: isAssignmentLoading, error: isAssignmentError } = useGetCarrierAssignmentByOrderIdQuery(orderId);
-    const getAssignmentData = getAssignmentDetails?.data[0]
-    console.log("getAssignmentData: ", getAssignmentData)
-    const orderData = order?.order;
-    const allocatedPackageDetails = order?.allocated_packages_details
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
+import { Box, CircularProgress, Grid } from "@mui/material";
+import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import BidHeader from "./BidHeader";
+import BidTabs, { BidTab } from "./BidTabs";
+import { useGetOrderByIdQuery } from "@/api/apiSlice";
+import InformationTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/InformationTab";
+import CargoTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/CargoTab";
+import TourTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/TourTab";
+import ContactsTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/ContactsTab";
+import AttachmentsTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/AttachmentsTab";
 
-    if (isAssignmentError) {
-        console.log("Getting while fecting carrier assigment details: ", isAssignmentError)
-    }
+const OrderDetails = () => {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("order_ID") ?? "";
+  console.log("orderId: ", orderId);
+  const { data: session } = useSession();
+  const carrierId = session?.user?.id ?? "";
+  const { data, isLoading } = useGetOrderByIdQuery({
+    orderId,
+  });
+  const [tab, setTab] = useState<BidTab>("information");
+  const order = data?.order;
+  const allocation = order?.allocations?.[0];
+  const allocatedPackageDetails = data?.allocated_packages_details;
 
+  if (isLoading) {
     return (
-        <Box sx={{ p: { xs: 0.2, md: 3 } }}>
-            <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading || isAssignmentLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
-            {orderData && (
-                <Paper sx={{ p: 3, mb: 3, }}>
-                    <Typography variant="h6" gutterBottom sx={{ color: "#F08C24", fontWeight: 'bold' }}>
-                        Order Details
-                    </Typography>
-                    <Box display="flex"
-                        flexWrap="wrap"
-                        gap={2}
-                        mt={{ xs: 0.2, md: 2 }}
-                    >
-                        <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
-                            <Typography variant="body1" sx={{ fontSize: { xs: '15px', md: '17px' } }}>Order ID: <strong>{orderData.order_ID}</strong></Typography>
-                        </Box>
-                        {/* <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
-                            <Typography variant="body1" sx={{ fontSize: { xs: '15px', md: '17px' } }}>Scenario:  <strong>{orderData.scenario_label}</strong> </Typography>
-                        </Box> */}
-                        <Box flex="1 1 100%" maxWidth={{ sm: "33%" }}>
-                            <Typography variant="body1" sx={{ fontSize: { xs: '15px', md: '17px' } }}>Created at: <strong>{moment(orderData.created_at).format("DD MMM YYYY")}</strong></Typography>
-                        </Box>
-                    </Box>
-                </Paper>
-            )}
-
-            {orderData?.allocations && <Allocations allocations={orderData.allocations} orderId={orderData.order_ID} allocatedPackageDetails={allocatedPackageDetails} from={from} assignmentData={getAssignmentData} />}
-        </Box>
+      <Grid
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "80vh",
+        }}
+      >
+        <CircularProgress />
+      </Grid>
     );
+  }
+  return (
+    <>
+      <Box sx={{ p: 3 }}>
+        <BidHeader
+          order={order}
+          onAccept={() => console.log("Accepted")}
+          onReject={() => console.log("Rejected")}
+        />
+        <BidTabs value={tab} onChange={setTab} />
+        {tab === "information" && (
+          <InformationTab order={order} allocation={allocation} />
+        )}
+        {tab === "cargo" && (
+          <CargoTab
+            order={order}
+            allocation={allocation}
+            allocatedPackageDetails={allocatedPackageDetails}
+          />
+        )}
+        {tab === "tour" && (
+          <TourTab
+            order={order}
+            allocation={allocation}
+            allocatedPackageDetails={allocatedPackageDetails}
+          />
+        )}
+        {tab === "contacts" && (
+          <ContactsTab order={order} allocation={allocation} />
+        )}
+        {tab === "attachments" && <AttachmentsTab order={order} />}
+      </Box>
+    </>
+  );
 };
 
-export default OrderDetailedOverview;
+export default OrderDetails;

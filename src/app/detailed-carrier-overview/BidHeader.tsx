@@ -5,7 +5,6 @@ import HeaderSummary from "./HeaderSummary";
 import { BidHeaderProps } from "@/types/DetailedBidTypes";
 
 const BidHeader = (props: BidHeaderProps) => {
-  console.log("props: ", props);
   return (
     <Box sx={{ mb: 3 }}>
       <HeaderTop {...props} />

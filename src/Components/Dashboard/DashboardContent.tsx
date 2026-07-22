@@ -48,7 +48,7 @@ const sections = [
         title: "Order Confirmation",
         description: "Confirm freight orders.",
         icon: <LocalShippingIcon />,
-        path: "/order-confirmation",
+        path: "/order-requests",
       },
     ],
   },
@@ -68,7 +68,7 @@ export default function DashboardContent() {
   console.log("DashboardContent is rendering");
   return (
     <>
-      <Typography variant="h3" mb={5} fontWeight={700}>
+      <Typography variant="h3" sx={{ mb: 5, fontWeight: 700 }}>
         AI Logistics Control Tower
       </Typography>
 
@@ -85,25 +85,18 @@ export default function DashboardContent() {
           </Typography>
 
           <Grid container spacing={3}>
-            {/* {section.cards.map((card) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={card.title}>
-                <SectionCard {...card} />
-              </Grid>
-            ))} */}
             {section.cards.map((card) => {
-  console.log("CARD:", card);
-
-  return (
-    <Grid item xs={12} sm={6} md={4} lg={3} key={card.title}>
-      <SectionCard
-        title={card.title}
-        description={card.description}
-        icon={card.icon}
-        path={card.path}
-      />
-    </Grid>
-  );
-})}
+              return (
+                <Grid sx={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={card.title}>
+                  <SectionCard
+                    title={card.title}
+                    description={card.description}
+                    icon={card.icon}
+                    path={card.path}
+                  />
+                </Grid>
+              );
+            })}
           </Grid>
         </div>
       ))}

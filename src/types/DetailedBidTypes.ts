@@ -165,33 +165,42 @@
 //   }[];
 // }
 
+// export interface BidHeaderProps {
+//   order: Order;
+//   bidAmount?: number | string;
+//   bidStatus?: string;
+//   bidClosingTime?: string;
+//   remainingTime: string
+// }
 export interface BidHeaderProps {
-  order: Order;
-  bidAmount?: number | string;
-  bidStatus?: string;
-  bidClosingTime?: string;
+    order: Order;
+    bidAmount?: string;
+    remainingTime?: string;
+existingBid?: {
+  bid_amount: string;
+  bid_placed_at: string;
+  bid_from: string;
+} | null;
+lowestBid?: number | null;
+onPlaceBid?: () => void;
+onAccept?: ()=>void;
+onReject?: ()=>void;
 }
-
 
 export interface RoutePoint {
   location_ID: string;
   location_name: string;
   address: string;
-
   arrival_time?: string;
   departure_time?: string;
-
   distance?: string;
   duration?: string;
-
   status?: string;
-
   start?: {
     address: string;
     latitude?: number;
     longitude?: number;
   };
-
   end?: {
     address: string;
     latitude?: number;
@@ -201,87 +210,50 @@ export interface RoutePoint {
 
 export interface PackageDetail {
   package_ID: string;
-
   product_name?: string;
-
   quantity?: number;
-
   weight?: number;
-
   volume?: number;
-
   pickup_location_name?: string;
-
   delivery_location_name?: string;
-
   pickup_contact?: string;
-
   delivery_contact?: string;
-
   pickup_time?: string;
-
   delivery_time?: string;
-
   status?: string;
 }
 
 export interface Vehicle {
   vehicle_ID: string;
-
   vehicle_number?: string;
-
   vehicle_type?: string;
-
   registration_number?: string;
-
   transporter_name?: string;
-
   transporter_company?: string;
-
   transporter_phone?: string;
-
   transporter_email?: string;
-
   driver_name?: string;
-
   driver_phone?: string;
-
   driver_email?: string;
-
   fuel_type?: string;
-
   capacity?: number;
-
   weight_capacity?: number;
-
   volume_capacity?: number;
 }
 
 export interface Attachment {
   id?: string;
-
   document_ID?: string;
-
   file_name?: string;
-
   name?: string;
-
   file_type?: string;
-
   extension?: string;
-
   file_size?: string;
-
   uploaded_by?: string;
-
   uploaded_on?: string;
-
   created_by?: string;
-
   created_at?: string;
-
   file_url?: string;
-
   url?: string;
 }
 

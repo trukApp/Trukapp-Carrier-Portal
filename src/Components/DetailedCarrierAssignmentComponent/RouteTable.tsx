@@ -29,27 +29,6 @@ interface RouteTableProps {
   data: RouteItem[];
 }
 
-// const getStatusColor = (
-//   status?: string,
-// ): "success" | "warning" | "info" | "default" | "error" => {
-//   switch (status?.toLowerCase()) {
-//     case "completed":
-//       return "success";
-
-//     case "current":
-//       return "info";
-
-//     case "pending":
-//       return "warning";
-
-//     case "cancelled":
-//       return "error";
-
-//     default:
-//       return "default";
-//   }
-// };
-
 const RouteTable: React.FC<RouteTableProps> = ({ data }) => {
   console.log("routedata: ", data);
   return (
