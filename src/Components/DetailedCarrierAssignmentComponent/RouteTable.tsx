@@ -1,7 +1,5 @@
 "use client";
-
 import React from "react";
-
 import {
   Chip,
   Paper,
@@ -13,7 +11,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-
 export interface RouteItem {
   sequence: number;
   location: string;
@@ -24,7 +21,6 @@ export interface RouteItem {
   duration?: string;
   status?: string;
 }
-
 interface RouteTableProps {
   data: RouteItem[];
 }

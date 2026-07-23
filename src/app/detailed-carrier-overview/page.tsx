@@ -1,6 +1,4 @@
 "use client";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import { useSearchParams } from "next/navigation";
@@ -20,6 +18,7 @@ const OrderDetails = () => {
   console.log("orderId: ", orderId);
   const { data: session } = useSession();
   const carrierId = session?.user?.id ?? "";
+  console.log("carrierId:", carrierId);
   const { data, isLoading } = useGetOrderByIdQuery({
     orderId,
   });

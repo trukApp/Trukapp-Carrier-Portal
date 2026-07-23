@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import React from "react";
-
 import { Chip, Stack, Typography } from "@mui/material";
-
-// import StatusChip from "./StatusChip";
 import RemainingTime from "./RemainingTime";
 import ActionButton from "./ActionButton";
-
 export interface BidColumn {
   id: string;
   label: string;
@@ -20,11 +15,8 @@ export interface BidColumn {
 
 const formatDate = (value?: string) => {
   if (!value) return "-";
-
   const date = new Date(value);
-
   if (Number.isNaN(date.getTime())) return "-";
-
   return date.toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -38,12 +30,10 @@ const getTotalDistance = (row: any) => {
   console.log("row", row);
   const routes = row.allocations?.[0]?.route ?? [];
   console.log("routes", routes);
-
   return routes.reduce((total: number, route: any) => {
     const distance = parseFloat(
       String(route.distance ?? "0").replace(" km", ""),
     );
-
     return total + (isNaN(distance) ? 0 : distance);
   }, 0);
 };

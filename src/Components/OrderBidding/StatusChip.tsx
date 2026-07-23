@@ -1,8 +1,6 @@
 "use client";
-
 import React from "react";
 import { Badge, Box, Tab, Tabs } from "@mui/material";
-
 interface Props {
   value: "all" | "new" | "responded";
   onChange: (value: "all" | "new" | "responded") => void;

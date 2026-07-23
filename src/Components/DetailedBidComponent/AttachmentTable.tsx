@@ -1,7 +1,5 @@
 "use client";
-
 import React from "react";
-
 import {
   Chip,
   IconButton,
@@ -16,7 +14,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
@@ -45,22 +42,18 @@ const getFileIcon = (type?: string) => {
   switch (type?.toLowerCase()) {
     case "pdf":
       return <PictureAsPdfOutlinedIcon color="error" fontSize="small" />;
-
     case "jpg":
     case "jpeg":
     case "png":
     case "gif":
       return <ImageOutlinedIcon color="success" fontSize="small" />;
-
     case "xls":
     case "xlsx":
     case "csv":
       return <TableChartOutlinedIcon color="success" fontSize="small" />;
-
     case "doc":
     case "docx":
       return <DescriptionOutlinedIcon color="primary" fontSize="small" />;
-
     default:
       return <InsertDriveFileOutlinedIcon color="action" fontSize="small" />;
   }
@@ -89,27 +82,27 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
             }}
           >
             <TableCell>
-              <Typography fontWeight={700}>File</Typography>
+              <Typography sx={{ fontWeight: 700 }}>File</Typography>
             </TableCell>
 
             <TableCell>
-              <Typography fontWeight={700}>Type</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Type</Typography>
             </TableCell>
 
             <TableCell>
-              <Typography fontWeight={700}>Size</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Size</Typography>
             </TableCell>
 
             <TableCell>
-              <Typography fontWeight={700}>Uploaded By</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Uploaded By</Typography>
             </TableCell>
 
             <TableCell>
-              <Typography fontWeight={700}>Uploaded On</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Uploaded On</Typography>
             </TableCell>
 
             <TableCell align="center">
-              <Typography fontWeight={700}>Actions</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Actions</Typography>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -163,7 +156,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
           ) : (
             <TableRow>
               <TableCell colSpan={6} align="center">
-                <Typography py={5} color="text.secondary">
+                <Typography sx={{ py: 5 }} color="text.secondary">
                   No attachments available
                 </Typography>
               </TableCell>

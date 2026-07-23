@@ -1,144 +1,5 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// "use client";
-// import { useEffect, useState } from "react";
-// import { Box, CircularProgress, Grid } from "@mui/material";
-// import { useSearchParams } from "next/navigation";
-// import BidHeader from "./BidHeader";
-// import BidTabs, { BidTab } from "./BidTabs";
-// import {
-//   useGetBidByOrderIdQuery,
-//   useGetOrderByIdQuery,
-//   usePlacingTheBidForOrderMutation,
-// } from "@/api/apiSlice";
-// import InformationTab from "@/Components/DetailedBidComponent/tabs/InformationTab";
-// import CargoTab from "@/Components/DetailedBidComponent/tabs/CargoTab";
-// import TourTab from "@/Components/DetailedBidComponent/tabs/TourTab";
-// import ContactsTab from "@/Components/DetailedBidComponent/tabs/ContactsTab";
-// import AttachmentsTab from "@/Components/DetailedBidComponent/tabs/AttachmentsTab";
-// import { useSession } from "next-auth/react";
-
-// const getRemainingTime = (closingTime?: string) => {
-//   if (!closingTime) return "N/A";
-
-//   const now = new Date().getTime();
-//   const end = new Date(closingTime).getTime();
-
-//   const diff = end - now;
-
-//   if (diff <= 0) return "Bid Closed";
-
-//   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-//   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-//   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-//   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-//   const parts: string[] = [];
-
-//   if (days) parts.push(`${days}d`);
-//   if (hours) parts.push(`${hours}h`);
-//   if (minutes) parts.push(`${minutes}m`);
-//   parts.push(`${seconds}s`);
-
-//   return parts.join(" ");
-// };
-
-// const OrderDetails = () => {
-//   const searchParams = useSearchParams();
-//   const bid_ID = searchParams.get("bid_ID") ?? "";
-//   const { data, isLoading } = useGetOrderByIdQuery({ orderId: bid_ID });
-//   const { data: bidData, isLoading: isBidLoading } = useGetBidByOrderIdQuery({
-//     orderId: bid_ID,
-//   });
-//   const [tab, setTab] = useState<BidTab>("information");
-//   const bidDataDetails = bidData?.data?.[0];
-//   const [remainingTime, setRemainingTime] = useState("");
-
-//   const [openBidDialog, setOpenBidDialog] = useState(false);
-//   const [bidAmount, setBidAmount] = useState("");
-//   const [snackbarOpen, setSnackbarOpen] = useState(false);
-//   const [placeBid, { isLoading: placingBid }] =
-//     usePlacingTheBidForOrderMutation();
-//   const { data: session } = useSession();
-//   const carrierId = session?.user?.id;
-//   console.log("carrierId: ", carrierId);
-//   const existingBid = bidDataDetails?.all_bids?.find(
-//     (bid: any) => bid.bid_from === carrierId,
-//   );
-//   console.log("existingBid: ", existingBid);
-//   useEffect(() => {
-//     if (!bidDataDetails?.bid_closing_time) return;
-//     const updateTimer = () => {
-//       setRemainingTime(getRemainingTime(bidDataDetails.bid_closing_time));
-//     };
-//     updateTimer();
-//     const interval = setInterval(updateTimer, 1000);
-//     return () => clearInterval(interval);
-//   }, [bidDataDetails?.bid_closing_time]);
-
-//   console.log("bidDataDetails", bidDataDetails);
-//   const allocatedPackageDetails = data?.allocated_packages_details;
-//   if (isLoading || isBidLoading) {
-//     return (
-//       <Grid
-//         sx={{
-//           display: "flex",
-//           justifyContent: "center",
-//           alignItems: "center",
-//           py: 8,
-//           minHeight: "80vh",
-//         }}
-//       >
-//         <CircularProgress />
-//       </Grid>
-//     );
-//   }
-//   const order = data?.order;
-//   console.log("order", order);
-//   const allocation = order?.allocations?.[0];
-//   return (
-//     <Box sx={{ p: 3 }}>
-//       <BidHeader
-//         order={order}
-//         bidAmount={bidDataDetails?.bid_value}
-//         remainingTime={remainingTime}
-//         existingBid={existingBid}
-//         onPlaceBid={() => setOpenBidDialog(true)}
-//       />
-//       <BidTabs value={tab} onChange={setTab} />
-//       {tab === "information" && (
-//         <InformationTab
-//           order={order}
-//           allocation={allocation}
-//           bidData={bidDataDetails}
-//         />
-//       )}
-//       {tab === "cargo" && (
-//         <CargoTab
-//           order={order}
-//           allocation={allocation}
-//           allocatedPackageDetails={allocatedPackageDetails}
-//         />
-//       )}
-//       {tab === "tour" && (
-//         <TourTab
-//           order={order}
-//           allocation={allocation}
-//           allocatedPackageDetails={allocatedPackageDetails}
-//         />
-//       )}
-//       {tab === "contacts" && (
-//         <ContactsTab order={order} allocation={allocation} />
-//       )}
-//       {tab === "attachments" && <AttachmentsTab order={order} />}
-//     </Box>
-//   );
-// };
-
-// export default OrderDetails;
-
-"use client";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Box, CircularProgress, Grid, Snackbar } from "@mui/material";
 import { useSearchParams } from "next/navigation";
@@ -150,7 +11,6 @@ import {
   useGetOrderByIdQuery,
   usePlacingTheBidForOrderMutation,
 } from "@/api/apiSlice";
-
 import InformationTab from "@/Components/DetailedBidComponent/tabs/InformationTab";
 import CargoTab from "@/Components/DetailedBidComponent/tabs/CargoTab";
 import TourTab from "@/Components/DetailedBidComponent/tabs/TourTab";
@@ -332,13 +192,8 @@ const OrderDetails = () => {
         remainingTime={remainingTime}
         targetAmount={bidDataDetails?.bid_value ?? ""}
         lowestBid={lowestBid}
-        startLocation={
-          // allocation?.start_loc_desc ?? order?.start_loc_desc ?? ""
-          allocation?.route[0]?.start?.address ?? "-"
-        }
-        //  allocation?.route[allocation?.route.length-1]?.end?.address ?? "-"
+        startLocation={allocation?.route[0]?.start?.address ?? "-"}
         endLocation={
-          // allocation?.end_loc_desc ?? order?.end_loc_desc ?? ""
           allocation?.route[allocation?.route.length - 1]?.end?.address ?? "-"
         }
         bidAmount={bidAmount}

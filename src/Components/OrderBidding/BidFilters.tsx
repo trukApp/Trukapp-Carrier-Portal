@@ -14,10 +14,19 @@ import SearchIcon from "@mui/icons-material/Search";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import TuneIcon from "@mui/icons-material/Tune";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { BidFilterState } from "@/app/order-bidding/page";
+import { Dayjs } from "dayjs";
 
-// import { BidFilterState } from "./index";
-
+export interface BidFilterState {
+  freightRFQ: string;
+  orderingParty: string;
+  departureLocation: string;
+  tenderStatus: string;
+  departureDate: Dayjs | null;
+}
+interface Props {
+  filters: BidFilterState;
+  onChange: React.Dispatch<React.SetStateAction<BidFilterState>>;
+}
 interface Props {
   filters: BidFilterState;
   onChange: React.Dispatch<React.SetStateAction<BidFilterState>>;
@@ -127,13 +136,28 @@ export default function BidFilters({ filters, onChange }: Props) {
         {/* Departure Date */}
 
         <Grid sx={{ xs: 12, md: 3 }}>
-          <DatePicker
+          {/* <DatePicker
             label="Departure Date"
             value={filters.departureDate}
             onChange={(value) =>
               onChange((prev) => ({
                 ...prev,
                 departureDate: value,
+              }))
+            }
+            slotProps={{
+              textField: {
+                fullWidth: true,
+              },
+            }}
+          /> */}
+          <DatePicker
+            label="Departure Date"
+            value={filters.departureDate}
+            onChange={(value) =>
+              onChange((prev) => ({
+                ...prev,
+                departureDate: value as Dayjs | null,
               }))
             }
             slotProps={{

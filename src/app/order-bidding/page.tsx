@@ -11,13 +11,14 @@ import { CarrierBidOrder } from "@/types/types";
 import BidFilters from "@/Components/OrderBidding/BidFilters";
 import BidTabs from "@/Components/OrderBidding/BidTabs";
 import BidTable from "@/Components/OrderBidding/BidTable";
+import { Dayjs } from "dayjs";
 
 export interface BidFilterState {
   freightRFQ: string;
   orderingParty: string;
   departureLocation: string;
   tenderStatus: string;
-  departureDate: Date | null;
+  departureDate: Dayjs | null;
 }
 
 const initialFilters: BidFilterState = {
@@ -33,7 +34,10 @@ const OrderBidding = () => {
   const { data: biddingResponse, isLoading } =
     useGetAllBiddingOrdersQuery(carrierId);
   const { data: locationsData } = useGetLocationMasterQuery({});
-  const bids: CarrierBidOrder[] = biddingResponse?.data ?? [];
+  const bids = useMemo<CarrierBidOrder[]>(
+    () => biddingResponse?.data ?? [],
+    [biddingResponse],
+  );
   const locations = locationsData?.locations ?? [];
   const [filters, setFilters] = useState<BidFilterState>(initialFilters);
   const [tab, setTab] = useState<"all" | "new" | "responded">("all");

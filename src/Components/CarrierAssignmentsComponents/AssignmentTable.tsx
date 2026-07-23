@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { DataGrid, GridPaginationModel } from "@mui/x-data-grid";
 import getAssignmentColumns from "./AssignmentColumns";
@@ -23,12 +23,9 @@ export default function AssignmentTable({
     pageSize: 10,
   });
   const router = useRouter();
-  const [selectedAssignment, setSelectedAssignment] =
-    useState<CarrierAssignment | null>(null);
-
-  const handleView = (assignment: CarrierAssignment) => {
+  const handleView = useCallback((assignment: CarrierAssignment) => {
     router.push(`/detailed-carrier-overview?order_ID=${assignment.order_ID}`);
-  };
+  }, [router]);
 
   const columns = useMemo(
     () =>
@@ -36,7 +33,7 @@ export default function AssignmentTable({
         locationMap,
         onView: handleView,
       }),
-    [locationMap],
+    [locationMap, handleView],
   );
 
   return (

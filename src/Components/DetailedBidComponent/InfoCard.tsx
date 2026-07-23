@@ -1,14 +1,10 @@
 "use client";
-
 import React from "react";
-
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
-
 interface InfoItem {
   label: string;
   value?: React.ReactNode;
 }
-
 interface InfoCardProps {
   title: string;
   items: InfoItem[];
@@ -38,10 +34,13 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, items, action }) => {
       >
         <Stack
           direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+          sx={{ justifyContent: "space-between", alignItems: "center" }}
         >
-          <Typography variant="subtitle1" fontWeight={700} color="#F68B1F">
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: 700 }}
+            color="#F68B1F"
+          >
             {title}
           </Typography>
 
@@ -59,9 +58,9 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, items, action }) => {
               xs: "column",
               sm: "row",
             }}
-            justifyContent="space-between"
-            spacing={1}
             sx={{
+              justifyContent: "space-between",
+              spacing: 1,
               px: 3,
               py: 2,
             }}
@@ -79,10 +78,12 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, items, action }) => {
 
             <Typography
               variant="body2"
-              fontWeight={600}
-              textAlign={{
-                xs: "left",
-                sm: "right",
+              sx={{
+                fontWeight: 600,
+                textAlign: {
+                  xs: "left",
+                  sm: "right",
+                },
               }}
             >
               {item.value ?? "-"}

@@ -1,45 +1,8 @@
-// "use client";
-
-// import React from "react";
-// import { Button } from "@mui/material";
-// // import EditIcon from "@mui/icons-material/Edit";
-
-// interface Props {
-//   row: any;
-//   onClick?: (row: any) => void;
-// }
-
-// export default function ActionButton({ row, onClick }: Props) {
-//   return (
-//     <Button
-//       variant="contained"
-//       // startIcon={<EditIcon />}
-//       disableElevation
-//       onClick={() => onClick?.(row)}
-//       sx={{
-//         textTransform: "none",
-//         fontWeight: 700,
-//         borderRadius: 2,
-//         px: 2,
-//         whiteSpace: "nowrap",
-//         backgroundColor: "#F68B1F",
-//         "&:hover": {
-//           backgroundColor: "#E67E22",
-//         },
-//         color: "#fff",
-//       }}
-//     >
-//       View Bid
-//     </Button>
-//   );
-// }
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import React from "react";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
-
 interface Props {
   row: any;
 }

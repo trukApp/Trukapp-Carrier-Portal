@@ -18,7 +18,7 @@ const AssignmentStatusChip = ({ status }: { status?: string | null }) => {
   let color: "success" | "warning" | "error" | "default" = "default";
 
   switch (normalized) {
-    case "confirmed":
+    case "carrier confirmed":
       color = "success";
       break;
 
@@ -26,7 +26,7 @@ const AssignmentStatusChip = ({ status }: { status?: string | null }) => {
       color = "warning";
       break;
 
-    case "rejected":
+    case "carrier rejected":
       color = "error";
       break;
   }

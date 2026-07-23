@@ -1,363 +1,217 @@
 "use client";
-
-import React from "react";
-
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-const ManageProfileBusiness = () => {
-  const initialValues = {
-    companyName: "",
-    primaryAddress: "",
-    contactPerson: "",
-    contactNumber: "",
-    email: "",
-    cnpId: "",
-    locationName: "",
-    locationAddress: "",
-    businessVisible: false,
-    autoAcceptConnections: false,
-    createdBy: "",
-    createdOn: "",
-    updatedBy: "",
-    updatedOn: "",
-  };
-  const validationSchema = Yup.object({
-    companyName: Yup.string().required("Company Name is required"),
-    primaryAddress: Yup.string().required("Primary Address is required"),
-    contactPerson: Yup.string().required("Contact Person is required"),
-    contactNumber: Yup.string()
-      .matches(/^[0-9]{10}$/, "Enter valid contact number")
-      .required("Contact Number is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    cnpId: Yup.string(),
-    locationName: Yup.string(),
-    locationAddress: Yup.string(),
-  });
+import { Box, Chip, Container, Stack, Typography } from "@mui/material";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import {
+  // BusinessLocation,
+  BusinessProfileFormValues,
+} from "@/types/ManageProfile";
+import CompanyInformationCard from "@/Components/ManageProfileComponents/CompanyInformationCard";
+import BrandingCard from "@/Components/ManageProfileComponents/BrandingCard";
+// import LocationsCard from "@/Components/ManageProfileComponents/LocationsCard";
+import BusinessSettingsCard from "@/Components/ManageProfileComponents/BusinessSettingsCard";
+import AuditInformationCard from "@/Components/ManageProfileComponents/AuditInformationCard";
+import StickyFooter from "@/Components/ManageProfileComponents/StickyFooter";
 
-  const formik = useFormik({
+const validationSchema = Yup.object({
+  companyName: Yup.string().required("Company Name is required"),
+  primaryAddress: Yup.string().required("Primary Address is required"),
+  contactPerson: Yup.string().required("Contact Person is required"),
+  contactNumber: Yup.string()
+    .required("Contact Number is required")
+    .matches(/^[0-9]{10}$/, "Enter a valid 10 digit phone number"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  locationName: Yup.string(),
+  locationAddress: Yup.string(),
+});
+
+const initialValues: BusinessProfileFormValues = {
+  companyName: "",
+  primaryAddress: "",
+  contactPerson: "",
+  contactNumber: "",
+  email: "",
+  companyLogo: null,
+  cnpId: "",
+  locationName: "",
+  locationAddress: "",
+  businessVisible: true,
+  autoAcceptConnections: false,
+  createdBy: "Admin",
+  createdOn: new Date().toLocaleDateString(),
+  updatedBy: "Admin",
+  updatedOn: new Date().toLocaleDateString(),
+  locations: [],
+};
+
+const ManageBusinessProfilePage = () => {
+  const [logo, setLogo] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const preview = useMemo(() => {
+    if (!logo) return "";
+
+    return URL.createObjectURL(logo);
+  }, [logo]);
+
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
+  const formik = useFormik<BusinessProfileFormValues>({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
-      console.log("Business Profile");
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        // API Call will be added in Part 8C
 
-      console.log(values);
+        console.log(values);
+      } finally {
+        setLoading(false);
+      }
     },
   });
 
+  useEffect(() => {
+    formik.setFieldValue("companyLogo", logo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logo]);
+
   const generateCnpId = () => {
     const id = `CNP-${Math.floor(100000 + Math.random() * 900000)}`;
-
     formik.setFieldValue("cnpId", id);
   };
 
+  // const addLocation = () => {
+  //   if (
+  //     !formik.values.locationName.trim() ||
+  //     !formik.values.locationAddress.trim()
+  //   ) {
+  //     return;
+  //   }
+
+  //   const newLocation: BusinessLocation = {
+  //     id: Date.now(),
+  //     locationName: formik.values.locationName,
+  //     locationAddress: formik.values.locationAddress,
+  //   };
+  //   formik.setFieldValue("locations", [
+  //     ...formik.values.locations,
+  //     newLocation,
+  //   ]);
+  //   formik.setFieldValue("locationName", "");
+  //   formik.setFieldValue("locationAddress", "");
+  // };
+
+  // const editLocation = (location: BusinessLocation) => {
+  //   formik.setFieldValue("locationName", location.locationName);
+  //   formik.setFieldValue("locationAddress", location.locationAddress);
+  //   formik.setFieldValue(
+  //     "locations",
+  //     formik.values.locations.filter((item) => item.id !== location.id),
+  //   );
+  // };
+
+  // const deleteLocation = (id: number) => {
+  //   formik.setFieldValue(
+  //     "locations",
+  //     formik.values.locations.filter((item) => item.id !== id),
+  //   );
+  // };
   return (
-    <Box
+    <Container
+      maxWidth="xl"
       sx={{
-        bgcolor: "#f5f6fa",
-        minHeight: "100vh",
-        p: 3,
+        py: 4,
       }}
     >
-      <Card
-        variant="outlined"
-        sx={{
-          borderRadius: 3,
-        }}
-      >
-        <form onSubmit={formik.handleSubmit}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="h6" fontWeight={700} mb={2}>
-              General Data
+      <Box component="form" onSubmit={formik.handleSubmit}>
+        {/* Page Header */}
+
+        <Stack
+          direction={{
+            xs: "column",
+            md: "row",
+          }}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: {
+              xs: "flex-start",
+              md: "center",
+            },
+            mb: 5,
+          }}
+          spacing={2}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "#F68B1F" }}>
+              Business Profile
             </Typography>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Company Name *"
-                  name="companyName"
-                  value={formik.values.companyName}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.companyName &&
-                    Boolean(formik.errors.companyName)
-                  }
-                  helperText={
-                    formik.touched.companyName && formik.errors.companyName
-                  }
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={6}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={3}
-                  label="Primary Address *"
-                  name="primaryAddress"
-                  value={formik.values.primaryAddress}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.primaryAddress &&
-                    Boolean(formik.errors.primaryAddress)
-                  }
-                  helperText={
-                    formik.touched.primaryAddress &&
-                    formik.errors.primaryAddress
-                  }
-                />
-              </Grid>
-            </Grid>
-
-            {/* ---------------- Correspondence ---------------- */}
-
-            <Typography variant="h6" fontWeight={700} mt={5} mb={2}>
-              Correspondence
+            <Typography sx={{ mt: 1 }} color="text.secondary">
+              Manage your company information, branding, locations and business
+              preferences.
             </Typography>
+          </Box>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Contact Person *"
-                  name="contactPerson"
-                  value={formik.values.contactPerson}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.contactPerson &&
-                    Boolean(formik.errors.contactPerson)
-                  }
-                  helperText={
-                    formik.touched.contactPerson && formik.errors.contactPerson
-                  }
-                />
-              </Grid>
+          <Chip
+            color="success"
+            icon={<CheckCircleRoundedIcon />}
+            label="Active"
+            sx={{
+              px: 1,
+              height: 40,
+              fontWeight: 600,
+              fontSize: 14,
+            }}
+          />
+        </Stack>
 
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Contact Number *"
-                  name="contactNumber"
-                  value={formik.values.contactNumber}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.contactNumber &&
-                    Boolean(formik.errors.contactNumber)
-                  }
-                  helperText={
-                    formik.touched.contactNumber && formik.errors.contactNumber
-                  }
-                />
-              </Grid>
+        {/* Content */}
 
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Email ID *"
-                  name="email"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email}
-                />
-              </Grid>
-            </Grid>
+        <Stack spacing={4}>
+          <CompanyInformationCard formik={formik} />
 
-            {/* ---------------- Company Branding ---------------- */}
+          <BrandingCard
+            formik={formik}
+            logo={logo}
+            preview={preview}
+            onLogoChange={setLogo}
+            onGenerateCnp={generateCnpId}
+          />
 
-            <Typography variant="h6" fontWeight={700} mt={5} mb={2}>
-              Company Branding
-            </Typography>
+          {/* <LocationsCard
+            formik={formik}
+            locations={formik.values.locations}
+            onAddLocation={addLocation}
+            onEditLocation={editLocation}
+            onDeleteLocation={deleteLocation}
+          /> */}
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Button
-                  component="label"
-                  variant="outlined"
-                  fullWidth
-                  sx={{ height: 56 }}
-                >
-                  Upload Company Logo
-                  <input hidden type="file" />
-                </Button>
-              </Grid>
+          <BusinessSettingsCard formik={formik} />
 
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="CNP ID"
-                  name="cnpId"
-                  value={formik.values.cnpId}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
+          <AuditInformationCard
+            values={{
+              createdBy: formik.values.createdBy,
+              createdOn: formik.values.createdOn,
+              updatedBy: formik.values.updatedBy,
+              updatedOn: formik.values.updatedOn,
+            }}
+          />
+        </Stack>
 
-              <Grid item xs={12} sm={6} md={4} mt={1}>
-                <Button
-                  variant="contained"
-                  sx={{ height: 40, width: "25%" }}
-                  onClick={generateCnpId}
-                >
-                  Generate
-                </Button>
-              </Grid>
-            </Grid>
-
-            {/* ---------------- Additional Locations ---------------- */}
-
-            <Typography variant="h6" fontWeight={700} mt={5} mb={2}>
-              Additional Locations
-            </Typography>
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Location Name"
-                  name="locationName"
-                  value={formik.values.locationName}
-                  onChange={formik.handleChange}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Location Address"
-                  name="locationAddress"
-                  value={formik.values.locationAddress}
-                  onChange={formik.handleChange}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4} mt={1}>
-                <Button variant="contained" sx={{ height: 40, width: "25%" }}>
-                  Add
-                </Button>
-              </Grid>
-            </Grid>
-
-            {/* ---------------- Business Settings ---------------- */}
-
-            <Typography variant="h6" fontWeight={700} mt={5} mb={2}>
-              Business Settings
-            </Typography>
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="businessVisible"
-                      checked={formik.values.businessVisible}
-                      onChange={formik.handleChange}
-                    />
-                  }
-                  label="Visible to Potential Partners"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="autoAcceptConnections"
-                      checked={formik.values.autoAcceptConnections}
-                      onChange={formik.handleChange}
-                    />
-                  }
-                  label="Auto Accept Connection Requests"
-                />
-              </Grid>
-            </Grid>
-
-            {/* ---------------- Audit Information ---------------- */}
-
-            <Typography variant="h6" fontWeight={700} mt={5} mb={2}>
-              Audit Information
-            </Typography>
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Created By"
-                  name="createdBy"
-                  value={formik.values.createdBy}
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Created On"
-                  name="createdOn"
-                  value={formik.values.createdOn}
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Updated By"
-                  name="updatedBy"
-                  value={formik.values.updatedBy}
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Updated On"
-                  name="updatedOn"
-                  value={formik.values.updatedOn}
-                  disabled
-                />
-              </Grid>
-            </Grid>
-
-            {/* ---------------- Footer Buttons ---------------- */}
-
-            <Stack direction="row" justifyContent="center" spacing={2} mt={6}>
-              <Button variant="outlined" size="large">
-                Cancel
-              </Button>
-
-              <Button type="submit" variant="contained" size="large">
-                Save Changes
-              </Button>
-            </Stack>
-          </CardContent>
-        </form>
-      </Card>
-    </Box>
+        <StickyFooter loading={loading} onCancel={() => formik.resetForm()} />
+      </Box>
+    </Container>
   );
 };
 
-export default ManageProfileBusiness;
+export default ManageBusinessProfilePage;

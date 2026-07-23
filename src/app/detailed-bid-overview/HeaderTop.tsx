@@ -1,114 +1,25 @@
-// "use client";
-// import React from "react";
-// import { Box, Chip, Stack, Typography } from "@mui/material";
-// import { BidHeaderProps } from "@/types/DetailedBidTypes";
-// interface HeaderTopProps extends BidHeaderProps {
-//   remainingTime: string;
-// }
-
-// const HeaderTop: React.FC<HeaderTopProps> = ({
-//   order,
-//   bidStatus,
-//   remainingTime,
-// }) => {
-//   return (
-//     <Box
-//       sx={{
-//         background: "#ffffff",
-//         borderRadius: 3,
-//         border: "1px solid #F4D3AA",
-//         overflow: "hidden",
-//         mb: 3,
-//       }}
-//     >
-//       <Box
-//         sx={{
-//           background: "linear-gradient(90deg,#F68B1F 0%,#F08C24 100%)",
-//           color: "#fff",
-//           px: 4,
-//           py: 3,
-//         }}
-//       >
-//         <Stack
-//           direction={{
-//             xs: "column",
-//             md: "row",
-//           }}
-//           sx={{ justifyContent: "space-between" }}
-//           spacing={2}
-//         >
-//           <Box>
-//             <Typography
-//               variant="caption"
-//               sx={{
-//                 opacity: 0.9,
-//                 // letterSpacing: 1,
-//                 fontSize: 16,
-//                 fontWeight: 600,
-//               }}
-//             >
-//               FREIGHT RFQ
-//             </Typography>
-
-//             <Typography variant="h4" sx={{ fontWeight: 500, fontSize: 16 }}>
-//               {order?.order_ID ?? "-"}
-//             </Typography>
-//           </Box>
-
-//           <Stack
-//             alignItems={{
-//               xs: "flex-start",
-//               md: "flex-end",
-//             }}
-//             spacing={1}
-//           >
-//             <Chip
-//               label={bidStatus ?? order?.order_status ?? "-"}
-//               sx={{
-//                 bgcolor: "#fff",
-//                 color: "#F68B1F",
-//                 fontWeight: 700,
-//                 textTransform: "capitalize",
-//               }}
-//             />
-
-//             <Typography variant="body2">Remaining Time</Typography>
-
-//             <Typography variant="h5" sx={{ fontWeight: 500, fontSize: 15 }}>
-//               {remainingTime}
-//             </Typography>
-//           </Stack>
-//         </Stack>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default HeaderTop;
-
 "use client";
-
 import React from "react";
-
 import { Box, Button, Chip, Stack, Typography } from "@mui/material";
-
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-
-import { BidHeaderProps } from "@/types/DetailedBidTypes";
-
-interface HeaderTopProps extends BidHeaderProps {
-  remainingTime: string;
+import { Order } from "@/types/DetailedBidTypes";
+export interface BidHeaderProps {
+  order: Order;
+  bidAmount?: string;
+  remainingTime?: string;
   existingBid?: {
     bid_amount: string;
     bid_placed_at: string;
     bid_from: string;
   } | null;
   lowestBid?: number | null;
-  onPlaceBid: () => void;
-  bidStatus: string;
+  onPlaceBid?: () => void;
+  onAccept?: () => void;
+  onReject?: () => void;
+  bidStatus?: string;
 }
 
-const HeaderTop: React.FC<HeaderTopProps> = ({
+const HeaderTop: React.FC<BidHeaderProps> = ({
   order,
   bidStatus,
   remainingTime,

@@ -1,15 +1,10 @@
 "use client";
-
 import React from "react";
-
 import { Badge, Box, Tab, Tabs } from "@mui/material";
-
 import { AssignmentTab } from "@/types/carrierAssignment";
-
 interface Props {
   value: AssignmentTab;
   onChange: (value: AssignmentTab) => void;
-
   allCount: number;
   pendingCount: number;
   confirmedCount: number;
@@ -93,7 +88,7 @@ export default function AssignmentTabs({
         />
 
         <Tab
-          value="confirmed"
+          value="carrier confirmed"
           label={
             <Badge badgeContent={confirmedCount} sx={badgeStyle}>
               Confirmed
@@ -102,7 +97,7 @@ export default function AssignmentTabs({
         />
 
         <Tab
-          value="rejected"
+          value="carrier rejected"
           label={
             <Badge badgeContent={rejectedCount} sx={badgeStyle}>
               Rejected

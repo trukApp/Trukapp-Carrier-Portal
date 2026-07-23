@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import React, { useMemo } from "react";
-
 import { Grid, Stack } from "@mui/material";
-
 import InfoCard from "../InfoCard";
 import RouteTable, { RouteItem } from "../RouteTable";
 import { PackageDetail } from "@/types/DetailedBidTypes";
-
 interface TourTabProps {
   order: any;
   allocation?: any;
@@ -16,7 +12,7 @@ interface TourTabProps {
 }
 
 const TourTab: React.FC<TourTabProps> = ({ order, allocation }) => {
-  const route = allocation?.route ?? [];
+  const route = useMemo(() => allocation?.route ?? [], [allocation?.route]);
   // console.log("allocatedPackageDetails: ", allocatedPackageDetails);
   console.log("order: ", order);
 

@@ -13,7 +13,7 @@ import { BidHeaderProps } from "@/types/DetailedBidTypes";
 
 const HeaderSummary: React.FC<BidHeaderProps> = ({ order, bidAmount }) => {
   const allocation = order?.allocations?.[0];
-  const route = allocation?.route ?? [];
+  const route = useMemo(() => allocation?.route ?? [], [allocation?.route]);
   const departure = route[0];
   const arrival = route[route.length - 1];
   const totalStops = useMemo(() => Math.max(route.length - 1, 0), [route]);
@@ -31,7 +31,7 @@ const HeaderSummary: React.FC<BidHeaderProps> = ({ order, bidAmount }) => {
         <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <SummaryCard
             title="Distance"
-            value={order.total_distance ?? "-"}
+            value={order?.total_distance ?? "-"}
             icon={<StraightenOutlinedIcon />}
           />
         </Grid>
@@ -39,7 +39,7 @@ const HeaderSummary: React.FC<BidHeaderProps> = ({ order, bidAmount }) => {
         <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <SummaryCard
             title="Weight"
-            value={order.total_weight ?? "-"}
+            value={order?.total_weight ?? "-"}
             icon={<ScaleOutlinedIcon />}
           />
         </Grid>

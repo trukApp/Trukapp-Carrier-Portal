@@ -18,6 +18,7 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CurrencyRupeeOutlinedIcon from "@mui/icons-material/CurrencyRupeeOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
+import InputAdornment from "@mui/material/InputAdornment";
 
 interface BidPlaceDialogProps {
   open: boolean;
@@ -337,7 +338,7 @@ const BidPlaceDialog: React.FC<BidPlaceDialogProps> = ({
               Enter Your Bid Amount
             </Typography>
 
-            <TextField
+            {/* <TextField
               fullWidth
               placeholder="Enter your bid amount"
               value={bidAmount}
@@ -368,6 +369,44 @@ const BidPlaceDialog: React.FC<BidPlaceDialogProps> = ({
                   borderRadius: 2,
                   fontSize: 18,
                   fontWeight: 600,
+                },
+              }}
+            /> */}
+
+            <TextField
+              fullWidth
+              placeholder="Enter your bid amount"
+              value={bidAmount}
+              disabled={loading}
+              type="number"
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (/^\d*$/.test(value)) {
+                  setBidAmount(value);
+                }
+              }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Typography
+                        sx={{
+                          fontSize: 24,
+                          fontWeight: 700,
+                          color: "#F68B1F",
+                        }}
+                      >
+                        ₹
+                      </Typography>
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    height: 58,
+                    borderRadius: 2,
+                    fontSize: 18,
+                    fontWeight: 600,
+                  },
                 },
               }}
             />

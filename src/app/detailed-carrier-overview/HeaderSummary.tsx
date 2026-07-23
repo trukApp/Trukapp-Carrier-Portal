@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import React, { useMemo } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
@@ -12,7 +12,7 @@ import { BidHeaderProps } from "@/types/DetailedBidTypes";
 
 const HeaderSummary: React.FC<BidHeaderProps> = ({ order }) => {
   const allocation = order?.allocations?.[0];
-  const route = allocation?.route ?? [];
+  const route = useMemo(() => allocation?.route ?? [], [allocation?.route]);
   const departure = route[0];
   const arrival = route[route.length - 1];
   const totalStops = useMemo(() => Math.max(route.length - 1, 0), [route]);
@@ -32,12 +32,6 @@ const HeaderSummary: React.FC<BidHeaderProps> = ({ order }) => {
     <Box sx={{ mt: 3 }}>
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          {/* <SummaryCard
-            title="Distance"
-            value={order.total_distance ?? "-"}
-            // value={${totalDistance.toLocaleString()} km}
-            icon={<StraightenOutlinedIcon />}
-          /> */}
           <SummaryCard
             title="Distance"
             value={

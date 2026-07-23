@@ -1,16 +1,12 @@
 "use client";
-
 import React from "react";
-
 import { Box, Tab, Tabs } from "@mui/material";
-
 export type BidTab =
   | "information"
   | "cargo"
   | "tour"
   | "contacts"
   | "attachments";
-
 interface BidTabsProps {
   value: BidTab;
   onChange: (value: BidTab) => void;

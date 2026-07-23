@@ -63,7 +63,7 @@ export default function SectionCard({ title, description, icon, path }: Props) {
           {icon}
         </Box>
 
-        <Typography fontWeight={700}>{title}</Typography>
+        <Typography sx={{ fontWeight: 700 }}>{title}</Typography>
 
         <Typography
           variant="body2"
@@ -76,7 +76,7 @@ export default function SectionCard({ title, description, icon, path }: Props) {
           {description}
         </Typography>
 
-        <Box display="flex" justifyContent="flex-end">
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <ArrowForwardIcon sx={{ color: "#F68B1F" }} />
         </Box>
       </CardContent>
