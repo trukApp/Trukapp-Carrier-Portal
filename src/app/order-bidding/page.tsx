@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, Grid, Typography } from "@mui/material";
-import { useAppSelector } from "@/Store";
+import { Dayjs } from "dayjs";
+import { useSession } from "next-auth/react";
 import {
   useGetAllBiddingOrdersQuery,
   useGetLocationMasterQuery,
+  useLazyGetAllRespondedBidsForCarrierQuery,
 } from "@/api/apiSlice";
-import { CarrierBidOrder } from "@/types/types";
 import BidFilters from "@/Components/OrderBidding/BidFilters";
-import BidTabs from "@/Components/OrderBidding/BidTabs";
 import BidTable from "@/Components/OrderBidding/BidTable";
-import { Dayjs } from "dayjs";
+import BidTabs from "@/Components/OrderBidding/BidTabs";
+import { CarrierBidOrder, Order } from "@/types/types";
 
 export interface BidFilterState {
   freightRFQ: string;
@@ -30,20 +31,62 @@ const initialFilters: BidFilterState = {
 };
 
 const OrderBidding = () => {
-  const carrierId = useAppSelector((state) => state.auth.carrierId);
-  const { data: biddingResponse, isLoading } =
-    useGetAllBiddingOrdersQuery(carrierId);
-  const { data: locationsData } = useGetLocationMasterQuery({});
-  const bids = useMemo<CarrierBidOrder[]>(
-    () => biddingResponse?.data ?? [],
-    [biddingResponse],
+  const { data: session } = useSession();
+  const carrierId = session?.user?.id ?? "";
+  const { data: biddingResponse, isLoading } = useGetAllBiddingOrdersQuery(
+    carrierId,
+    { skip: !carrierId },
   );
+  const [
+    getRespondedBids,
+    { data: respondedResponse, isLoading: respondedLoading },
+  ] = useLazyGetAllRespondedBidsForCarrierQuery();
+  const { data: locationsData } = useGetLocationMasterQuery({});
   const locations = locationsData?.locations ?? [];
   const [filters, setFilters] = useState<BidFilterState>(initialFilters);
   const [tab, setTab] = useState<"all" | "new" | "responded">("all");
-  console.log("bids", bids);
+  const [respondedLoaded, setRespondedLoaded] = useState(false);
+  // console.log("biddingResponse: ", biddingResponse);
+  console.log("respondedResponse: ", respondedResponse);
+  useEffect(() => {
+    if (tab === "responded" && carrierId && !respondedLoaded) {
+      getRespondedBids(carrierId);
+      setRespondedLoaded(true);
+    }
+  }, [tab, carrierId, respondedLoaded, getRespondedBids]);
+
+  const openBids = useMemo<CarrierBidOrder[]>(
+    () => biddingResponse?.data ?? [],
+    [biddingResponse],
+  );
+
+  const respondedBids = useMemo(() => {
+    const filtered = (respondedResponse?.data ?? []).filter((order: Order) =>
+      order.all_bids?.some((bid: any) => bid.bid_from === carrierId),
+    );
+
+    const map = new Map<string, CarrierBidOrder>();
+
+    filtered.forEach((item: any) => {
+      map.set(item.order_ID, item);
+    });
+
+    return [...map.values()];
+  }, [respondedResponse, carrierId]);
+  const newBids = useMemo<CarrierBidOrder[]>(() => openBids, [openBids]);
+  const displayedRows = useMemo(() => {
+    switch (tab) {
+      case "new":
+        return newBids;
+      case "responded":
+        return respondedBids;
+      default:
+        return newBids;
+    }
+  }, [tab, newBids, respondedBids]);
+
   const filteredRows = useMemo(() => {
-    return bids.filter((item) => {
+    return displayedRows.filter((item) => {
       const freightMatch =
         !filters.freightRFQ ||
         item.order_ID?.toLowerCase().includes(filters.freightRFQ.toLowerCase());
@@ -53,16 +96,20 @@ const OrderBidding = () => {
 
       return freightMatch && statusMatch;
     });
-  }, [bids, filters]);
+  }, [displayedRows, filters]);
 
-  const newCount = bids.filter((x) => x.bid_status === "open").length;
-  const respondedCount = bids.filter(
-    (x) => x.bid_status === "responded",
-  ).length;
+  const newCount = newBids.length;
+  const allCount = newCount;
 
   return (
     <Grid sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 700,
+          mb: 3,
+        }}
+      >
         Freight RFQs
       </Typography>
 
@@ -74,19 +121,23 @@ const OrderBidding = () => {
       >
         <CardContent>
           <BidFilters filters={filters} onChange={setFilters} />
+
           <Grid sx={{ mt: 3 }} />
+
           <BidTabs
             value={tab}
             onChange={setTab}
-            allCount={bids.length}
+            allCount={allCount}
             newCount={newCount}
-            respondedCount={respondedCount}
           />
+
           <Grid sx={{ mt: 2 }} />
           <BidTable
-            loading={isLoading}
+            loading={tab === "responded" ? respondedLoading : isLoading}
             rows={filteredRows}
             locations={locations}
+            tab={tab}
+            carrierId={carrierId}
           />
         </CardContent>
       </Card>

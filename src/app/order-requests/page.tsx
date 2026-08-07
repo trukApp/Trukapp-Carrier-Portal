@@ -60,6 +60,7 @@ export default function CarrierAssignmentsPage() {
 
   const filteredRows = useMemo(() => {
     return (carrierAssignments as CarrierAssignment[]).filter((item) => {
+      console.log("item: ", item);
       const freightMatch =
         !filters.freightOrder ||
         item.order_ID
@@ -79,9 +80,52 @@ export default function CarrierAssignmentsPage() {
           .toLowerCase()
           .includes(filters.departureLocation.toLowerCase());
 
-      const tabMatch =
-        tab === "all" ? true : item.assignment_status.toLowerCase() === tab;
+      const tabMatch = (() => {
+        switch (tab) {
+          case "all":
+            return true;
 
+          case "pending":
+            return item.order_status.toLowerCase() === "carrier assignment";
+
+          case "carrier confirmed":
+            return (
+              item.assignment_status.toLowerCase() === "carrier confirmed" &&
+              item.order_status.toLowerCase() !== "finished"
+            );
+          case "carrier rejected":
+            return item.assignment_status.toLowerCase() === "carrier rejected";
+          case "completed":
+            return item.order_status.toLowerCase() === "finished";
+
+          default:
+            return true;
+        }
+      })();
+      // const tabMatch = (() => {
+      //   switch (tab) {
+      //     case "all":
+      //       return true;
+
+      //     case "pending":
+      //       return item.order_status.toLowerCase() === "carrier assignment";
+
+      //     case "confirmed":
+      //       return (
+      //         item.assignment_status.toLowerCase() === "carrier confirmed" &&
+      //         item.order_status.toLowerCase() !== "finished"
+      //       );
+
+      //     case "rejected":
+      //       return item.assignment_status.toLowerCase() === "carrier rejected";
+
+      //     case "completed":
+      //       return item.order_status.toLowerCase() === "finished";
+
+      //     default:
+      //       return true;
+      //   }
+      // })();
       return freightMatch && statusMatch && departureMatch && tabMatch;
     });
   }, [carrierAssignments, filters, locationMap, tab]);
@@ -89,23 +133,7 @@ export default function CarrierAssignmentsPage() {
   const pendingCount = useMemo(
     () =>
       (carrierAssignments as CarrierAssignment[]).filter(
-        (x) => x.assignment_status.toLowerCase() === "pending",
-      ).length,
-    [carrierAssignments],
-  );
-
-  const confirmedCount = useMemo(
-    () =>
-      (carrierAssignments as CarrierAssignment[]).filter(
-        (x) => x.assignment_status.toLowerCase() === "carrier confirmed",
-      ).length,
-    [carrierAssignments],
-  );
-
-  const rejectedCount = useMemo(
-    () =>
-      (carrierAssignments as CarrierAssignment[]).filter(
-        (x) => x.assignment_status.toLowerCase() === "carrier rejected",
+        (x) => x.order_status.toLowerCase() === "carrier assignment",
       ).length,
     [carrierAssignments],
   );
@@ -131,16 +159,12 @@ export default function CarrierAssignmentsPage() {
         <CardContent>
           <AssignmentFilters filters={filters} onChange={setFilters} />
           <Grid sx={{ mt: 3 }} />
-
           <AssignmentTabs
             value={tab}
             onChange={setTab}
-            allCount={carrierAssignments.length}
+            // allCount={}
             pendingCount={pendingCount}
-            confirmedCount={confirmedCount}
-            rejectedCount={rejectedCount}
           />
-
           <Grid sx={{ mt: 2 }} />
 
           <AssignmentTable

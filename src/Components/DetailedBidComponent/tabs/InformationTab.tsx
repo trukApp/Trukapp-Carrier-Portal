@@ -32,10 +32,10 @@ const InformationTab: React.FC<InformationTabProps> = ({
                 label: "Order Status",
                 value: order?.order_status,
               },
-              {
-                label: "Scenario",
-                value: order?.scenario_label,
-              },
+              // {
+              //   label: "Scenario",
+              //   value: order?.scenario_label,
+              // },
               {
                 label: "Bid Status",
                 value: bidData?.bid_status,

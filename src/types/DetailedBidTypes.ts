@@ -1,18 +1,92 @@
-export interface BidHeaderProps {
-    order: Order;
-    bidAmount?: string;
-    remainingTime?: string;
-existingBid?: {
-  bid_amount: string;
-  bid_placed_at: string;
-  bid_from: string;
-} | null;
-lowestBid?: number | null;
-onPlaceBid?: () => void;
-onAccept?: ()=>void;
-onReject?: ()=>void;
-bidStatus?: string;
 
+export interface CarrierAssignmentData {
+  ca_id: number;
+  cas_ID: string;
+  order_ID: string;
+
+  req_sent_to: string[];
+  confirmed_to: string;
+
+  assigned_pro_number: string | null;
+  assigned_time: string | null;
+
+  assignment_cost: {
+    cost: string;
+    total_weight: string | null;
+    total_distance: string | null;
+    cost_criteria_considered: string;
+  } | null;
+
+  assignment_status: string | null;
+
+  carrier_bill: unknown[] | null;
+
+  confirmed_time: string | null;
+
+  device_ID: string | null;
+
+  dock_allocated: string | null;
+  dock_allocation_status: string | null;
+  dock_time_requested: string | null;
+
+  driver_data: {
+    c_driver_license: string;
+    c_driver_name: string;
+    c_driver_number: string;
+  } | null;
+
+  vehicle_num: string | null;
+}
+// export interface BidHeaderProps {
+//   order: Order;
+//   bidAmount?: string;
+//   remainingTime?: string;
+//   existingBid?: {
+//     bid_amount: string;
+//     bid_placed_at: string;
+//     bid_from: string;
+//   } | null;
+//   lowestBid?: number | null;
+//   onPlaceBid?: () => void;
+//   onAccept?: () => void;
+//   onReject?: () => void;
+//   bidStatus?: string;
+//   carrierID?: string;
+//   isBidFinalised?: boolean;
+// isFinalisedForCurrentCarrier?: boolean;
+// finalisedBid?: {
+//   finalised_bid: string;
+//   finalised_for: string;
+//   CarrierAssignmentData ?: CarrierAssignmentData | null;
+// };
+// }
+export interface BidHeaderProps {
+  order: Order;
+  bidAmount?: string;
+  remainingTime?: string;
+
+  existingBid?: {
+    bid_amount: string;
+    bid_placed_at: string;
+    bid_from: string;
+  } | null;
+  lowestBid?: number | null;
+  onPlaceBid?: () => void;
+  onAccept?: () => void;
+  onReject?: () => void;
+  bidStatus?: string;
+  carrierID: string;
+
+  isBidFinalised?: boolean;
+
+  isFinalisedForCurrentCarrier?: boolean;
+
+  finalisedBid?: {
+    finalised_bid: string;
+    finalised_for: string;
+  };
+
+  carrierAssignmentData?: CarrierAssignmentData | null;
 }
 
 export interface RoutePoint {
@@ -96,7 +170,7 @@ export interface Allocation {
   leftoverWeight: number;
   packages: string[];
   route: RoutePoint[];
-  packageDetails:string[];
+  packageDetails: string[];
 }
 
 export interface Order {
@@ -207,4 +281,3 @@ export interface Location {
   def_ship_to: number | boolean;
   gst_number: string;
 }
-

@@ -6,7 +6,6 @@ interface Props {
   onChange: (value: "all" | "new" | "responded") => void;
   allCount: number;
   newCount: number;
-  respondedCount: number;
 }
 
 export default function BidTabs({
@@ -14,7 +13,6 @@ export default function BidTabs({
   onChange,
   allCount,
   newCount,
-  respondedCount,
 }: Props) {
   const handleChange = (
     _: React.SyntheticEvent,
@@ -83,14 +81,7 @@ export default function BidTabs({
           }
         />
 
-        <Tab
-          value="responded"
-          label={
-            <Badge badgeContent={respondedCount} sx={badgeStyle}>
-              Responded
-            </Badge>
-          }
-        />
+        <Tab value="responded" label={<Badge sx={badgeStyle}>Closed</Badge>} />
       </Tabs>
     </Box>
   );

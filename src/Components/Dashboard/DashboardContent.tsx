@@ -42,13 +42,13 @@ const sections = [
         title: "Freight Quotations",
         description: "Review carrier quotations.",
         icon: <ReceiptIcon />,
-        path: "/freight-quotations",
+        path: "/order-requests",
       },
       {
         title: "Order Confirmation",
         description: "Confirm freight orders.",
         icon: <LocalShippingIcon />,
-        path: "/order-requests",
+        path: "/confirmed-orders",
       },
     ],
   },
@@ -65,7 +65,6 @@ const sections = [
   },
 ];
 export default function DashboardContent() {
-  console.log("DashboardContent is rendering");
   return (
     <>
       <Typography variant="h3" sx={{ mb: 5, fontWeight: 700 }}>

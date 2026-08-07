@@ -16,7 +16,9 @@ export interface BidColumn {
 const formatDate = (value?: string) => {
   if (!value) return "-";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
   return date.toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -27,9 +29,7 @@ const formatDate = (value?: string) => {
 };
 
 const getTotalDistance = (row: any) => {
-  console.log("row", row);
   const routes = row.allocations?.[0]?.route ?? [];
-  console.log("routes", routes);
   return routes.reduce((total: number, route: any) => {
     const distance = parseFloat(
       String(route.distance ?? "0").replace(" km", ""),
@@ -38,170 +38,306 @@ const getTotalDistance = (row: any) => {
   }, 0);
 };
 
-export const bidColumns = (): BidColumn[] => [
-  {
-    id: "rfq",
-    label: "Freight RFQ",
-    minWidth: 180,
-    render: (row) => (
-      <Stack spacing={0.5}>
-        <Typography sx={{ fontWeight: 700, fontSize: 14 }}>
-          {row.order_ID}
+export const bidColumns = (
+  tab: "all" | "new" | "responded",
+  carrierId: string,
+): BidColumn[] => {
+  const columns: BidColumn[] = [
+    {
+      id: "rfq",
+      label: "Freight RFQ",
+      minWidth: 180,
+      render: (row) => (
+        <Stack spacing={0.5}>
+          <Typography
+            sx={{
+              fontWeight: 700,
+              fontSize: 14,
+            }}
+          >
+            {row.order_ID}
+          </Typography>
+
+          <Typography variant="caption" color="text.secondary">
+            {row.order_type || "Standard Shipment"}
+          </Typography>
+        </Stack>
+      ),
+    },
+
+    {
+      id: "remaining",
+      label: "Remaining Time",
+      width: 140,
+      render: (row) => <RemainingTime bidEndTime={row.bid_closing_time} />,
+    },
+
+    {
+      id: "departure",
+      label: "Departure",
+      minWidth: 180,
+      render: (row) => (
+        <Stack spacing={0.5}>
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 13,
+            }}
+          >
+            {formatDate(row.expected_pickup ?? row.bid_start_time)}
+          </Typography>
+
+          <Typography variant="caption" color="text.secondary">
+            Pickup
+          </Typography>
+        </Stack>
+      ),
+    },
+
+    {
+      id: "arrival",
+      label: "Arrival",
+      minWidth: 180,
+      render: (row) => (
+        <Stack spacing={0.5}>
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 13,
+            }}
+          >
+            {formatDate(row.expected_delivery)}
+          </Typography>
+
+          <Typography variant="caption" color="text.secondary">
+            Delivery
+          </Typography>
+        </Stack>
+      ),
+    },
+
+    {
+      id: "source",
+      label: "Departure Location",
+      minWidth: 220,
+      render: (row) => (
+        <Typography
+          sx={{
+            fontSize: 13,
+          }}
+        >
+          {row.start_loc_ID ?? row.route?.start_loc_ID ?? "-"}
         </Typography>
+      ),
+    },
 
-        <Typography variant="caption" color="text.secondary">
-          {row.order_type || "Standard Shipment"}
+    {
+      id: "destination",
+      label: "Arrival Location",
+      minWidth: 220,
+      render: (row) => (
+        <Typography
+          sx={{
+            fontSize: 13,
+          }}
+        >
+          {row.end_loc_ID ?? row.route?.end_loc_ID ?? "-"}
         </Typography>
-      </Stack>
-    ),
-  },
+      ),
+    },
 
-  {
-    id: "remaining",
-    label: "Remaining Time",
-    width: 140,
-    render: (row) => <RemainingTime bidEndTime={row.bid_closing_time} />,
-  },
+    {
+      id: "stops",
+      label: "Stops",
+      width: 90,
+      align: "center",
+      render: (row) => (
+        <Chip
+          size="small"
+          label={row.allocations?.[0]?.route?.length ?? 0}
+          sx={{
+            bgcolor: "#FFF3E0",
+            color: "#F68B1F",
+            fontWeight: 700,
+          }}
+        />
+      ),
+    },
 
-  {
-    id: "departure",
-    label: "Departure",
-    minWidth: 180,
-    render: (row) => (
-      <Stack spacing={0.5}>
-        <Typography sx={{ fontWeight: 600, fontSize: 13 }}>
-          {formatDate(row.expected_pickup ?? row.bid_start_time)}
+    {
+      id: "weight",
+      label: "Weight",
+      width: 120,
+      align: "center",
+      render: (row) => (
+        <Typography
+          sx={{
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {row.total_weight ? `${row.total_weight} kg` : "-"}
         </Typography>
+      ),
+    },
 
-        <Typography variant="caption" color="text.secondary">
-          Pickup
+    {
+      id: "distance",
+      label: "Distance",
+      width: 120,
+      align: "center",
+      render: (row) => (
+        <Typography
+          sx={{
+            fontWeight: 600,
+          }}
+        >
+          {getTotalDistance(row)} km
         </Typography>
-      </Stack>
-    ),
-  },
+      ),
+    },
 
-  {
-    id: "arrival",
-    label: "Arrival",
-    minWidth: 180,
-    render: (row) => (
-      <Stack spacing={0.5}>
-        <Typography sx={{ fontWeight: 600, fontSize: 13 }}>
-          {formatDate(row.expected_delivery)}
-        </Typography>
+    {
+      id: "status",
+      label: "Status",
+      width: 130,
+      align: "center",
+      render: (row) => (
+        <Chip
+          size="small"
+          label={row.bid_status}
+          color={
+            row.bid_status === "finalised"
+              ? "success"
+              : row.bid_status === "open"
+                ? "warning"
+                : "default"
+          }
+        />
+      ),
+    },
+    {
+      id: "action",
+      label: "Action",
+      minWidth: 180,
+      render: (row) => <ActionButton row={row} />,
+    },
+  ];
 
-        <Typography variant="caption" color="text.secondary">
-          Delivery
-        </Typography>
-      </Stack>
-    ),
-  },
+  if (tab === "new") {
+    columns.splice(
+      columns.length - 1,
+      0,
 
-  {
-    id: "source",
-    label: "Departure Location",
-    minWidth: 220,
-    render: (row) => (
-      <Typography sx={{ fontSize: 13 }}>
-        {row.start_loc_ID ?? row.route?.start_loc_ID ?? "-"}
-      </Typography>
-    ),
-  },
+      {
+        id: "myBidAmount",
+        label: "Your Bid Amount",
+        minWidth: 160,
+        align: "center",
+        render: (row) => {
+          const myBid = row.all_bids?.find(
+            (bid: any) => bid.bid_from === carrierId,
+          );
 
-  {
-    id: "destination",
-    label: "Arrival Location",
-    minWidth: 220,
-    render: (row) => (
-      <Typography sx={{ fontSize: 13 }}>
-        {row.end_loc_ID ?? row.route?.end_loc_ID ?? "-"}
-      </Typography>
-    ),
-  },
+          return (
+            <Typography sx={{ fontWeight: 600 }}>
+              {myBid ? `₹${myBid.bid_amount}` : "Not Bided"}
+            </Typography>
+          );
+        },
+      },
 
-  {
-    id: "stops",
-    label: "Stops",
-    width: 90,
-    align: "center",
-    render: (row) => (
-      <Chip
-        size="small"
-        label={row.allocations?.[0]?.route?.length ?? 0}
-        sx={{
-          bgcolor: "#FFF3E0",
-          color: "#F68B1F",
-          fontWeight: 700,
-        }}
-      />
-    ),
-  },
+      {
+        id: "myBidTime",
+        label: "Bid Placed At",
+        minWidth: 180,
+        align: "center",
+        render: (row) => {
+          const myBid = row.all_bids?.find(
+            (bid: any) => bid.bid_from === carrierId,
+          );
 
-  {
-    id: "weight",
-    label: "Weight",
-    width: 120,
-    // align: "right",
-    align: "center",
-    render: (row) => (
-      // <Typography sx={{ fontWeight: 600 }}>
-      //   {row.total_weight ? `${row.total_weight} kg` : "-"}
-      // </Typography>
-      <Typography
-        sx={{
-          fontWeight: 600,
-          whiteSpace: "nowrap",
-        }}
-      >
-        {row.total_weight ? `${row.total_weight} kg` : "-"}
-      </Typography>
-    ),
-  },
+          return (
+            <Typography>
+              {myBid ? formatDate(myBid.bid_placed_at) : "--"}
+            </Typography>
+          );
+        },
+      },
+    );
+  }
+  if (tab === "responded") {
+    columns.splice(columns.length - 1, 0, {
+      id: "yourBid",
+      label: "Your Bid Amount",
+      minWidth: 170,
+      align: "center",
+      render: (row) => {
+        const myBid = row.all_bids[0].bid_amount;
+        return (
+          <Typography sx={{ fontWeight: 600 }}>
+            {myBid ? `₹${myBid}` : "-"}
+          </Typography>
+        );
+      },
+    });
+  }
 
-  {
-    id: "distance",
-    label: "Distance",
-    width: 120,
-    // align: "right",
-    align: "center",
-    render: (row) => (
-      <Typography sx={{ fontWeight: 600 }}>
-        {/* {row.distance ? `${row.distance} km` : "-"} */}
-        {getTotalDistance(row)} km
-      </Typography>
-    ),
-  },
+  /**
+   * Extra columns for Responded tab
+   */
+  if (tab === "responded") {
+    columns.splice(
+      columns.length - 1,
+      0,
 
-  // {
-  //   id: "price",
-  //   label: "Bid Amount",
-  //   width: 150,
-  //   align: "right",
-  //   render: (row) => (
-  //     <Typography sx={{ fontWeight: 700, color: "#2E7D32" }}>
-  //       ₹{Number(row.bid_value ?? row.total_cost ?? 0).toLocaleString("en-IN")}
-  //     </Typography>
-  //   ),
-  // },
+      {
+        id: "finalisedCarrier",
+        label: "Finalised Carrier",
+        minWidth: 170,
+        align: "center",
+        render: (row) => {
+          if (row.bid_status !== "finalised") {
+            return <Typography color="text.secondary">-</Typography>;
+          }
 
-  {
-    id: "status",
-    label: "Status",
-    width: 120,
-    // align: "center",
-    align: "center",
-    render: (row) => (
-      <Typography sx={{ fontWeight: 700 }}>
-        {row.bid_status === "open" ? "Open" : "Closed"}
-      </Typography>
-    ),
-  },
+          return (
+            <Typography
+              sx={{
+                fontWeight: 600,
+                color: "#2E7D32",
+              }}
+            >
+              {row.finalised_bid?.finalised_for ?? "-"}
+            </Typography>
+          );
+        },
+      },
 
-  {
-    id: "action",
-    label: "Action",
-    minWidth: 180,
-    // render: (row) => <ActionButton row={row} onClick={onAccept} />,
-    render: (row) => <ActionButton row={row} />,
-  },
-];
+      {
+        id: "finalisedBid",
+        label: "Finalised Bid",
+        minWidth: 150,
+        align: "center",
+        render: (row) => {
+          if (row.bid_status !== "finalised") {
+            return <Typography color="text.secondary">-</Typography>;
+          }
+
+          return (
+            <Typography
+              sx={{
+                fontWeight: 700,
+                color: "#2E7D32",
+              }}
+            >
+              ₹{row.finalised_bid?.finalised_bid ?? "-"}
+            </Typography>
+          );
+        },
+      },
+    );
+  }
+
+  return columns;
+};

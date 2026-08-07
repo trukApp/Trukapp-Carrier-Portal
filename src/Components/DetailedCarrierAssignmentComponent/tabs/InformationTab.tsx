@@ -30,17 +30,9 @@ const InformationTab: React.FC<InformationTabProps> = ({
                 label: "Order Status",
                 value: order?.order_status,
               },
-              {
-                label: "Scenario",
-                value: order?.scenario_label,
-              },
               // {
-              //   label: "Bid Status",
-              //   value: bidData?.bid_status,
-              // },
-              // {
-              //   label: "Created On",
-              //   value: bidData?.bid_start_time,
+              //   label: "Scenario",
+              //   value: order?.scenario_label,
               // },
             ]}
           />

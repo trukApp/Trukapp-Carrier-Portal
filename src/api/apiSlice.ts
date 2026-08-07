@@ -1,4 +1,9 @@
-import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryApi,
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 import apiConfig from "../Config/Config";
 import { getSession } from "next-auth/react";
 
@@ -6,203 +11,244 @@ import { getSession } from "next-auth/react";
 const baseUrl = apiConfig.develpoment.apiBaseUrl;
 
 const customBaseQuery = async (
-    args: string | FetchArgs,
-    api: BaseQueryApi,
-    extraOptions: Record<string, unknown>
+  args: string | FetchArgs,
+  api: BaseQueryApi,
+  extraOptions: Record<string, unknown>,
 ) => {
-    const session = await getSession();
-    const token = session?.user?.accessToken;
-    const rawBaseQuery = fetchBaseQuery({
-        baseUrl,
-        prepareHeaders: (headers) => {
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
-            }
-            return headers;
-        },
-    });
+  const session = await getSession();
+  const token = session?.user?.accessToken;
+  const rawBaseQuery = fetchBaseQuery({
+    baseUrl,
+    prepareHeaders: (headers) => {
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  });
 
-    return rawBaseQuery(args, api, extraOptions);
+  return rawBaseQuery(args, api, extraOptions);
 };
 
 export const apiSlice = createApi({
-    reducerPath: "api",
-    baseQuery: customBaseQuery,
-    tagTypes: [
-        "LocationMaster",
-        "ProductMaster",
-        "Orders",
-        "Orderss",
-        "CARRIER_ASSIGNMENTS",
-        "Order Bidding"
-    ],
-    endpoints: (builder) => ({
-        getLocationMaster: builder.query({
-            query: (params) => ({
-                url: `masLoc/all-locations`,
-                method: "GET",
-                params,
-            }),
-            providesTags: [{ type: "LocationMaster", id: "LIST" }],
-        }),
-
-        getAllProducts: builder.query({
-            query: (params) => ({
-                url: `masterProducts/all-products`,
-                method: "GET",
-                params,
-            }),
-            providesTags: [{ type: "ProductMaster", id: "LIST" }],
-        }),
-
-        getOrderById: builder.query({
-            query: ({ orderId }) => ({
-                url: `order/order-by-id`,
-                method: "GET",
-                params: { order_ID: orderId },
-            }),
-            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }],
-        }),
-
-        getAssignedOrderById: builder.query({
-            query: (params) => ({
-                url: `ao/assigned-order`,
-                method: "GET",
-                params,
-            }),
-        }),
-
-        getCarrierAssignmentReq: builder.query({
-            query: (carrierId) => ({
-                url: `carrier-assignment/carrier-assignments?carrier_ID=${carrierId}`,
-                method: "GET",
-            }),
-            providesTags: [{ type: "Orderss", id: "LIST" }]
-        }),
-
-        postCarrierRejectigOrder: builder.mutation({
-            query: (body) => ({
-                url: "carrier-assignment/carrier-assignment/reject",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "Orderss", id: "LIST" }]
-        }),
-
-        postCarrierAssigningOrderConfirm: builder.mutation({
-            query: (body) => ({
-                url: "carrier-assignment/carrier-assignment/confirm",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "Orderss", id: "LIST" }]
-        }),
-
-        getCarrierAssignments: builder.query({
-            query: (carrierId) => ({
-                url: `carrier-assignment/assignment?carrier_ID=${carrierId}`,
-                method: "GET",
-            }),
-            providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
-        }),
-
-        getCarrierAssignmentByOrderId: builder.query({
-            query: (orderID) => ({
-                url: `carrier-assignment/assigned-order-by-id?order_ID=${orderID}`,
-                method: "GET",
-            }),
-            providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
-        }),
-
-        dockRequestingToPickOrder: builder.mutation({
-            query: (requestBody) => ({
-                url: `carrier-assignment/schedule-dock-time`,
-                method: "PUT",
-                body: requestBody,
-            }),
-            invalidatesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
-        }),
-
-        getAllOrders: builder.query({
-            query: (params) => ({
-                url: `order/all-orders`,
-                method: "GET",
-                params,
-            }),
-            providesTags: [{ type: "Orders", id: "LIST" }],
-        }),
-
-        //BIDDING API'S
-        getAllBiddingOrders: builder.query({
-            query: (carrierId) => ({
-                url: `assignment-bid/active-bids?carrier_ID=${carrierId}`,
-                method: "GET",
-            }),
-            providesTags: [{ type: "Order Bidding", id: "LIST" }],
-        }),
-
-        getAllFinalizedBiddings: builder.query({
-            query: (carrierId) => ({
-                url: `assignment-bid/finalised-bids?carrier_ID=${carrierId}`,
-                method: "GET",
-            }),
-            providesTags: [{ type: "Order Bidding", id: "LIST" }],
-        }),
-
-        placingTheBidForOrder: builder.mutation({
-            query: ({ body, bid_id, order_ID }) => ({
-                url: `assignment-bid/place-bid?bid_id=${bid_id}&order_ID=${order_ID}`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "Order Bidding", id: "LIST" }],
-        }),
-
-        getAllCarrierPlacedBidsOrders: builder.query({
-            query: (carrierId) => ({
-                url: `assignment-bid/bids-order-id?order_ID=${carrierId}`,
-                method: "GET",
-            }),
-            providesTags: [{ type: "Order Bidding", id: "LIST" }],
-        }),
-
-        getBidByOrderId: builder.query({
-            query: ({ orderId }) => ({
-                url: `assignment-bid/bids-order-id?`,
-                method: "GET",
-                params: { order_ID: orderId },
-            }),
-            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }, { type: "Order Bidding", id: "LIST" }],
-        }),
-        getPackageByID: builder.query({
-            query: ({ Package_ID }) => ({
-                url: `products/packages/get-package`,
-                method: "GET",
-                params: { pack_ID: Package_ID },
-            }),
-            providesTags: [{ type: "Orders", id: "LIST" }, { type: "Orderss", id: "LIST" }, { type: "Order Bidding", id: "LIST" }],
-        }),
+  reducerPath: "api",
+  baseQuery: customBaseQuery,
+  tagTypes: [
+    "LocationMaster",
+    "ProductMaster",
+    "Orders",
+    "Orderss",
+    "CARRIER_ASSIGNMENTS",
+    "Order Bidding",
+  ],
+  endpoints: (builder) => ({
+    getLocationMaster: builder.query({
+      query: (params) => ({
+        url: `masLoc/all-locations`,
+        method: "GET",
+        params,
+      }),
+      providesTags: [{ type: "LocationMaster", id: "LIST" }],
     }),
 
+    getAllProducts: builder.query({
+      query: (params) => ({
+        url: `masterProducts/all-products`,
+        method: "GET",
+        params,
+      }),
+      providesTags: [{ type: "ProductMaster", id: "LIST" }],
+    }),
+
+    getOrderById: builder.query({
+      query: ({ orderId }) => ({
+        url: `order/order-by-id`,
+        method: "GET",
+        params: { order_ID: orderId },
+      }),
+      providesTags: [
+        { type: "Orders", id: "LIST" },
+        { type: "Orderss", id: "LIST" },
+      ],
+    }),
+
+    getCarrierAssignedOrderById: builder.query({
+      query: ({ orderId }) => ({
+        url: `carrier-assignment/assigned-order-by-id`,
+        method: "GET",
+        params: { order_ID: orderId },
+      }),
+      providesTags: [
+        { type: "Orders", id: "LIST" },
+        { type: "Orderss", id: "LIST" },
+        { type: "Order Bidding", id: "LIST" }
+      ],
+    }),
+
+    getAssignedOrderById: builder.query({
+      query: (params) => ({
+        url: `ao/assigned-order`,
+        method: "GET",
+        params,
+      }),
+    }),
+
+    getCarrierAssignmentReq: builder.query({
+      query: (carrierId) => ({
+        url: `carrier-assignment/carrier-assignments?carrier_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "Orderss", id: "LIST" }],
+    }),
+
+    postCarrierRejectigOrder: builder.mutation({
+      query: (body) => ({
+        url: "carrier-assignment/carrier-assignment/reject",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "Orderss", id: "LIST" }],
+    }),
+
+    postCarrierAssigningOrderConfirm: builder.mutation({
+      query: (body) => ({
+        url: "carrier-assignment/carrier-assignment/confirm",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "Orderss", id: "LIST" }],
+    }),
+
+    getCarrierAssignments: builder.query({
+      query: (carrierId) => ({
+        url: `carrier-assignment/assignment?carrier_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+    }),
+
+    getCarrierAssignmentByOrderId: builder.query({
+      query: (orderID) => ({
+        url: `carrier-assignment/assigned-order-by-id?order_ID=${orderID}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+    }),
+
+    dockRequestingToPickOrder: builder.mutation({
+      query: (requestBody) => ({
+        url: `carrier-assignment/schedule-dock-time`,
+        method: "PUT",
+        body: requestBody,
+      }),
+      invalidatesTags: [{ type: "CARRIER_ASSIGNMENTS", id: "LIST" }],
+    }),
+
+    getAllOrders: builder.query({
+      query: (params) => ({
+        url: `order/all-orders`,
+        method: "GET",
+        params,
+      }),
+      providesTags: [{ type: "Orders", id: "LIST" }],
+    }),
+
+    //BIDDING API'S
+    getAllBiddingOrders: builder.query({
+      query: (carrierId) => ({
+        url: `assignment-bid/active-bids?carrier_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "Order Bidding", id: "LIST" }],
+    }),
+
+    getAllRespondedBidsForCarrier: builder.query({
+      query: (carrierId) => ({
+        url: `assignment-bid/carrier-bids?carrier_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "Order Bidding", id: "LIST" }],
+    }),
+
+    getAllFinalizedBiddings: builder.query({
+      query: (carrierId) => ({
+        url: `assignment-bid/finalised-bids?carrier_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "Order Bidding", id: "LIST" }],
+    }),
+    getAllConfirmedFinalizedBiddings: builder.query({
+      query: (carrierId) => ({
+        url: `assignment-bid/finalised-bids-with-dock?carrier_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "Order Bidding", id: "LIST" }],
+    }),
+
+    placingTheBidForOrder: builder.mutation({
+      query: ({ body, bid_id, order_ID }) => ({
+        url: `assignment-bid/place-bid?bid_id=${bid_id}&order_ID=${order_ID}`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "Order Bidding", id: "LIST" }],
+    }),
+
+    getAllCarrierPlacedBidsOrders: builder.query({
+      query: (carrierId) => ({
+        url: `assignment-bid/bids-order-id?order_ID=${carrierId}`,
+        method: "GET",
+      }),
+      providesTags: [{ type: "Order Bidding", id: "LIST" }],
+    }),
+
+    getBidByOrderId: builder.query({
+      query: ({ orderId }) => ({
+        url: `assignment-bid/bids-order-id?`,
+        method: "GET",
+        params: { order_ID: orderId },
+      }),
+      providesTags: [
+        { type: "Orders", id: "LIST" },
+        { type: "Orderss", id: "LIST" },
+        { type: "Order Bidding", id: "LIST" },
+      ],
+    }),
+    getPackageByID: builder.query({
+      query: ({ Package_ID }) => ({
+        url: `products/packages/get-package`,
+        method: "GET",
+        params: { pack_ID: Package_ID },
+      }),
+      providesTags: [
+        { type: "Orders", id: "LIST" },
+        { type: "Orderss", id: "LIST" },
+        { type: "Order Bidding", id: "LIST" },
+      ],
+    }),
+  }),
 });
 
 export const {
-    useGetLocationMasterQuery,
-    useGetAllProductsQuery,
-    useGetOrderByIdQuery,
-    useGetAssignedOrderByIdQuery,
-    useGetCarrierAssignmentReqQuery,
-    usePostCarrierRejectigOrderMutation,
-    usePostCarrierAssigningOrderConfirmMutation,
-    useGetCarrierAssignmentsQuery,
-    useGetAllOrdersQuery,
-    useGetAllBiddingOrdersQuery,
-    usePlacingTheBidForOrderMutation,
-    useGetAllCarrierPlacedBidsOrdersQuery,
-    useGetCarrierAssignmentByOrderIdQuery,
-    useDockRequestingToPickOrderMutation,
-    useGetAllFinalizedBiddingsQuery,
-    useGetBidByOrderIdQuery,
-    useGetPackageByIDQuery,
-    useLazyGetPackageByIDQuery
+  useGetLocationMasterQuery,
+  useGetAllProductsQuery,
+  useGetOrderByIdQuery,
+  useGetAssignedOrderByIdQuery,
+  useGetCarrierAssignmentReqQuery,
+  usePostCarrierRejectigOrderMutation,
+  usePostCarrierAssigningOrderConfirmMutation,
+  useGetCarrierAssignmentsQuery,
+  useGetAllOrdersQuery,
+  useGetAllBiddingOrdersQuery,
+  usePlacingTheBidForOrderMutation,
+  useGetAllCarrierPlacedBidsOrdersQuery,
+  useGetCarrierAssignmentByOrderIdQuery,
+  useDockRequestingToPickOrderMutation,
+  useGetAllFinalizedBiddingsQuery,
+  useGetBidByOrderIdQuery,
+  useGetPackageByIDQuery,
+  useLazyGetPackageByIDQuery,
+  useLazyGetAllRespondedBidsForCarrierQuery,
+  useGetAllConfirmedFinalizedBiddingsQuery,
+  useGetCarrierAssignedOrderByIdQuery,
 } = apiSlice;

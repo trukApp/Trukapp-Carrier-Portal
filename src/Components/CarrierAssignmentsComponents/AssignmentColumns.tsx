@@ -124,7 +124,9 @@ export default function getAssignmentColumns({
       width: 130,
 
       renderCell: ({ row }) => (
-        <Typography>{Number(row.total_weight).toLocaleString()} kg</Typography>
+        <Typography>
+          {Number(row.assignment_cost?.total_weight).toLocaleString()} kg
+        </Typography>
       ),
     },
 

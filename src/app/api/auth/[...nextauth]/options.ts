@@ -91,14 +91,12 @@ export const options: NextAuthOptions = {
                             }),
                         }
                     );
-                    console.log("login response :", response);
                     if (response.status === 404) {
                         throw new Error("You dont have an account to login");
                     } else if (response.status === 500) {
                         throw new Error("Internal server occured , try after sometime...");
                     }
                     const user = await response.json();
-                    console.log("user is :", user);
                     if (user && user.accessToken) {
                         return {
                             id: user.carrier_ID,
@@ -130,7 +128,6 @@ export const options: NextAuthOptions = {
             }
 
             const expiryToken = token.accessTokenExpires as number;
-            console.log("token expires in milli secs:", expiryToken - Date.now());
             if (Date.now() < expiryToken) {
                 return token;
             }

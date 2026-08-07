@@ -52,16 +52,94 @@ interface Allocation {
     packages: string[];
 }
 
+// export interface Order {
+//     updated_at: string;
+//     created_at: string;
+//     unallocated_packages: string[];
+//     ord_id: number;
+//     order_ID: string;
+//     scenario_label: string;
+//     total_cost: string;
+//     allocations: Allocation[];
+//     order_status: string
+// }
 export interface Order {
-    updated_at: string;
-    created_at: string;
-    unallocated_packages: string[];
-    ord_id: number;
-    order_ID: string;
-    scenario_label: string;
-    total_cost: string;
-    allocations: Allocation[];
-    order_status: string
+  bid_id: number;
+  ord_id: number;
+
+  order_ID: string;
+  order_status: string;
+
+  bid_value: string;
+  bid_status: string;
+  bid_start_time: string;
+  bid_closing_time: string;
+  bid_end_time: string;
+
+  scenario_label: string;
+
+  start_loc_ID: string;
+  end_loc_ID: string;
+
+  total_cost: string;
+  total_distance: string;
+  total_weight: string;
+
+  allocated_packages: string[];
+  allocated_vehicles: string[];
+  unallocated_packages: string[];
+
+  allocations: Allocation[];
+
+  bid_reqs: string[];
+
+  finalised_bid?: {
+    finalised_bid: string;
+    finalised_for: string;
+  } | null;
+
+  all_bids?: {
+    bid_amount: string;
+    bid_from: string;
+    bid_placed_at: string;
+  }[];
+
+  assignment_status?: string | null;
+  assignment_cost?: {
+    cost: string;
+    total_weight: string | null;
+    total_distance: string | null;
+    cost_criteria_considered: string;
+  } | null;
+
+  assigned_pro_number?: string | null;
+  assigned_time?: string | null;
+  confirmed_time?: string | null;
+
+  bill_of_lading?: unknown[] | null;
+  carrier_bill?: unknown[] | null;
+
+  draft: number;
+
+  package_dest_radius: unknown[] | null;
+
+  order_docs: unknown[];
+
+  driver_data?: {
+    c_driver_name: string;
+    c_driver_number: string;
+    c_driver_license: string;
+  } | null;
+
+  vehicle_num?: string | null;
+  device_ID?: string | null;
+
+  dock_allocated?: string | null;
+  dock_allocation_status?: string | null;
+  dock_time_requested?: string | null;
+
+  created_at: string;
+  updated_at: string;
 }
 interface PackageDestRadius {
     pack_ID: string;

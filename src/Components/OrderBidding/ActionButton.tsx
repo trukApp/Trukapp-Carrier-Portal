@@ -9,7 +9,7 @@ interface Props {
 
 export default function ActionButton({ row }: Props) {
   const router = useRouter();
-  console.log("row", row);
+  // console.log("row", row);
   const handleViewBid = () => {
     router.push(`/detailed-bid-overview?bid_ID=${row.order_ID}`);
   };

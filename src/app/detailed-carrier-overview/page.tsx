@@ -5,7 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import BidHeader from "./BidHeader";
 import BidTabs, { BidTab } from "./BidTabs";
-import { useGetOrderByIdQuery } from "@/api/apiSlice";
+import {
+  useGetCarrierAssignedOrderByIdQuery,
+  useGetOrderByIdQuery,
+} from "@/api/apiSlice";
 import InformationTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/InformationTab";
 import CargoTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/CargoTab";
 import TourTab from "@/Components/DetailedCarrierAssignmentComponent/tabs/TourTab";
@@ -22,12 +25,20 @@ const OrderDetails = () => {
   const { data, isLoading } = useGetOrderByIdQuery({
     orderId,
   });
+  const {
+    data: carrierAssignedOrderData,
+    isLoading: isCarrierAssignedOrderLoading,
+  } = useGetCarrierAssignedOrderByIdQuery({
+    orderId,
+  });
+  const carrierAssignmentData = carrierAssignedOrderData?.data[0];
+  // console.log("carrierAssignedOrderData: ", carrierAssignmentData);
   const [tab, setTab] = useState<BidTab>("information");
   const order = data?.order;
   const allocation = order?.allocations?.[0];
   const allocatedPackageDetails = data?.allocated_packages_details;
 
-  if (isLoading) {
+  if (isLoading || isCarrierAssignedOrderLoading) {
     return (
       <Grid
         sx={{
@@ -46,8 +57,9 @@ const OrderDetails = () => {
       <Box sx={{ p: 3 }}>
         <BidHeader
           order={order}
-          onAccept={() => console.log("Accepted")}
           onReject={() => console.log("Rejected")}
+          carrierID={carrierId}
+          carrierAssignmentData={carrierAssignmentData}
         />
         <BidTabs value={tab} onChange={setTab} />
         {tab === "information" && (

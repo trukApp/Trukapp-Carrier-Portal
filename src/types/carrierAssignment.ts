@@ -84,8 +84,16 @@ export interface AssignmentFilterState {
   departureDate: Date | null;
 }
 
+// export type AssignmentTab =
+//   | "all"
+//   | "pending"
+//   | "confirmed"
+//   | "rejected"
+//   |"completed";
+
 export type AssignmentTab =
   | "all"
   | "pending"
-  | "confirmed"
-  | "rejected";
+  | "carrier confirmed"
+  | "carrier rejected"
+  | "completed";

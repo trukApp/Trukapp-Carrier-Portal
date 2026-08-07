@@ -5,19 +5,12 @@ import { AssignmentTab } from "@/types/carrierAssignment";
 interface Props {
   value: AssignmentTab;
   onChange: (value: AssignmentTab) => void;
-  allCount: number;
   pendingCount: number;
-  confirmedCount: number;
-  rejectedCount: number;
 }
-
 export default function AssignmentTabs({
   value,
   onChange,
-  allCount,
   pendingCount,
-  confirmedCount,
-  rejectedCount,
 }: Props) {
   const handleChange = (_: React.SyntheticEvent, newValue: AssignmentTab) => {
     onChange(newValue);
@@ -69,14 +62,7 @@ export default function AssignmentTabs({
           },
         }}
       >
-        <Tab
-          value="all"
-          label={
-            <Badge badgeContent={allCount} sx={badgeStyle}>
-              All
-            </Badge>
-          }
-        />
+        <Tab value="all" label={<Badge sx={badgeStyle}>All</Badge>} />
 
         <Tab
           value="pending"
@@ -89,20 +75,16 @@ export default function AssignmentTabs({
 
         <Tab
           value="carrier confirmed"
-          label={
-            <Badge badgeContent={confirmedCount} sx={badgeStyle}>
-              Confirmed
-            </Badge>
-          }
+          label={<Badge sx={badgeStyle}>Confirmed</Badge>}
         />
 
         <Tab
           value="carrier rejected"
-          label={
-            <Badge badgeContent={rejectedCount} sx={badgeStyle}>
-              Rejected
-            </Badge>
-          }
+          label={<Badge sx={badgeStyle}>Rejected</Badge>}
+        />
+        <Tab
+          value="completed"
+          label={<Badge sx={badgeStyle}>Completed</Badge>}
         />
       </Tabs>
     </Box>

@@ -78,6 +78,12 @@ const OrderDetails = () => {
       null
     );
   }, [carrierId, bidDataDetails]);
+  const isBidFinalised = bidDataDetails?.bid_status === "finalised";
+
+  const finalisedBid = bidDataDetails?.finalised_bid;
+
+  const isFinalisedForCurrentCarrier =
+    finalisedBid?.finalised_for === carrierId;
   const lowestBid = useMemo(() => {
     if (!bidDataDetails?.all_bids?.length) return null;
     return Math.min(
@@ -155,6 +161,10 @@ const OrderDetails = () => {
           existingBid={existingBid}
           lowestBid={lowestBid}
           onPlaceBid={handleOpenBidDialog}
+          isBidFinalised={isBidFinalised}
+          finalisedBid={finalisedBid}
+          isFinalisedForCurrentCarrier={isFinalisedForCurrentCarrier}
+          carrierID={carrierId}
         />
         <BidTabs value={tab} onChange={setTab} />
         {tab === "information" && (
